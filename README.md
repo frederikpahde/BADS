@@ -1,2 +1,2 @@
 # BADS
-!(https://github.com/Fred93/BADS/master/git.pdf)
+!(https://github.com/Fred93/BADS/raw/master/git.pdf)
