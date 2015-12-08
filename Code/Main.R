@@ -1,4 +1,4 @@
-dir <- Sys.getenv('/Users/Alexey/Documents/HU Berlin/WI 1516/BADS/Aufgabe/BADS')   
+dir <- Sys.getenv('BADS_Path')   
 #C:/Users/D059348/dev/HU/BADS
 #set working directory as ../Code
 
@@ -38,13 +38,18 @@ completeCases = numericVariables[completeInds]
 corrplot(cor(completeCases))
 
 
+
 #identify highly corelated coplete veriables (only numeric)
+
+
+
 correlationMatrix <- cor(completeCases[,])
-#print(correlationMatrix)
+print(correlationMatrix)
 # find attributes that are highly corrected (ideally >0.75)
+#verbose=TRUE
 highlyCorrelated <- findCorrelation(correlationMatrix, cutoff=0.75)
 # print indexes of highly correlated attributes
-#print(highlyCorrelated)
+print(highlyCorrelated)
 head(completeCases[,highlyCorrelated])
 #delete highly corelated columns
 cleanedDataCoplete<-completeCases[,-highlyCorrelated]
