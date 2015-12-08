@@ -27,3 +27,31 @@ completeInds <- complete.cases(t(numericVariables))
 completeCases = numericVariables[completeInds]
 corrplot(cor(completeCases))
 
+getAccuracy <- function(model, testSet){
+  pred <- predict(model, newdata=testSet, type="response")
+  class <- round(pred)
+  confustionTable <- CrossTable(testSet$churn, class, prop.c=FALSE)$t
+  return((confustionTable[1,1]+confustionTable[1,2])/length(y))
+}
+
+n <- 10
+dataset = completeCases[1:1000,]
+setSize = round(dim(dataset)[1]/n)
+shuffledDataset <- dataset[sample(nrow(dataset)),]
+avg=0
+for (i in 1:n) {
+  print(i)
+  inds.test = ((i-1)*setSize+1):((i-1)*setSize+setSize)
+  inds.training = setdiff(1:nrow(dataset), inds.test)
+  test = shuffledDataset[inds.test,]
+  training = shuffledDataset[inds.training,]
+  lr<-glm(churn~.,data=training,family=binomial(link="logit"))
+  avg = avg + getAccuracy(model = lr, testSet = test)
+}
+
+#rf <- randomForest(churn~.,data=completeCases[1:1000,],ntree=500, mtry=3)
+res = round(predict(rf, newdata = completeCases[1001:2000,]))
+y = completeCases[1001:2000,]
+CrossTable(y$churn, res, prop.c=FALSE)$t
+
+
