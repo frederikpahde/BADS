@@ -1,4 +1,4 @@
-requiredPackages = c("data.table", "ggplot2", "corrplot", "Hmisc")
+requiredPackages = c("data.table", "ggplot2", "corrplot", "Hmisc", "caret")
 
 requirePackage <- function(x)
 {
