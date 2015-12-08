@@ -4,7 +4,7 @@ dir <- Sys.getenv('BADS_Path')
 dir <-getwd()
 source(paste0(dir, "/Code/Utils.R"))
 source(paste0(dir, "/Code/PlotHelper.R"))
-print("test")
+print("tesfhsd")
 #Script to install and load needed packages
 source(paste0(dir, "/Code/Init.R")) 
 
