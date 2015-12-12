@@ -1,7 +1,5 @@
 dir <- Sys.getenv('BADS_Path')   
 #C:/Users/D059348/dev/HU/BADS
-
-dir <-getwd()
 source(paste0(dir, "/Code/Utils.R"))
 source(paste0(dir, "/Code/PlotHelper.R"))
 print("tesfhsd")
@@ -30,11 +28,17 @@ numericVariables = getNumericVariables(trainingset)
 categoricVariables <- trainingset[setdiff(colnames(trainingset), colnames(numericVariables))]
 
 #plots hists of all 138 numeric variables
-#plotHists(numericVariables, 5)
+plotHists(numericVariables, 5)
 
-completeInds <- complete.cases(t(numericVariables))
-completeCases = numericVariables[completeInds]
+##Missing Value Handling
+source(paste0(dir,"/Code/missingValueHandler.R"))
+completeCases <- getImputedData(numericVariables)
+
+#completeInds <- complete.cases(t(numericVariables))
+#completeCases = numericVariables[completeInds]
 corrplot(cor(completeCases))
+
+
 
 getAccuracy <- function(model, testSet){
   pred <- predict(model, newdata=testSet, type="response")
@@ -44,7 +48,7 @@ getAccuracy <- function(model, testSet){
 }
 
 n <- 10
-dataset = completeCases[1:1000,]
+dataset = completeCases[1:10000,]
 setSize = round(dim(dataset)[1]/n)
 shuffledDataset <- dataset[sample(nrow(dataset)),]
 avg=0
