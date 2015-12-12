@@ -1,4 +1,4 @@
-requiredPackages = c("data.table", "cvTools", "ggplot2", "corrplot", "DMwR", "caret",  "Hmisc", "randomForest", "gmodels")
+requiredPackages = c("data.table", "cvTools", "ggplot2", "corrplot", "DMwR", "caret",  "Hmisc", "randomForest", "gmodels", "outliers")
 requirePackage <- function(x)
 {
   if (!require(x,character.only = TRUE, warn.conflicts = FALSE))

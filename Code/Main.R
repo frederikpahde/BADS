@@ -1,7 +1,7 @@
 dir <- Sys.getenv('BADS_Path')   
 #C:/Users/D059348/dev/HU/BADS
 
-dir <-getwd()
+#dir <-getwd()
 source(paste0(dir, "/Code/Utils.R"))
 source(paste0(dir, "/Code/PlotHelper.R"))
 print("tesfhsd")
@@ -64,10 +64,10 @@ y = completeCases[1001:2000,]
 CrossTable(y$churn, res, prop.c=FALSE)$t
 
 
+#Corelation
+
+
 #identify highly corelated coplete veriables (only numeric)
-
-
-
 correlationMatrix <- cor(completeCases[,])
 print(correlationMatrix)
 
@@ -83,4 +83,18 @@ cleanedDataCoplete<-completeCases[,-highlyCorrelated]
 #remove highly corelated from the original data
 colunmNames<-colnames(completeCases)[highlyCorrelated]
 cleanedOriginalData<-trainingset[,!(names(trainingset) %in% colunmNames)]
+
+
+#HANDLING OUTLIERS
+#completeCases has 91 variables
+#find variables which must contain outliers
+difference.Median.Mean<-abs(apply(completeCases,2, function(x) median(x)-mean(x)))
+#st.d<-apply(completeCases,2,sd)
+indicies <- which(difference.Median.Mean>apply(completeCases,2,median)/2)
+summary(completeCases[,indicies])
+
+source(paste0(dir, "/Code/Outliers.R"))
+variable<-set.Outliers.To.Mean(completeCases$mou_opkv_Range, 1.5)
+
+
 
