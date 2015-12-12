@@ -64,10 +64,10 @@ y = completeCases[1001:2000,]
 CrossTable(y$churn, res, prop.c=FALSE)$t
 
 
+#Corelation
+
+
 #identify highly corelated coplete veriables (only numeric)
-
-
-
 correlationMatrix <- cor(completeCases[,])
 print(correlationMatrix)
 
@@ -134,3 +134,18 @@ tim[1:3]
 
 
 ###########################################################################################
+
+
+#HANDLING OUTLIERS
+#completeCases has 91 variables
+#find variables which must contain outliers
+difference.Median.Mean<-abs(apply(completeCases,2, function(x) median(x)-mean(x)))
+#st.d<-apply(completeCases,2,sd)
+indicies <- which(difference.Median.Mean>apply(completeCases,2,median)/2)
+summary(completeCases[,indicies])
+
+source(paste0(dir, "/Code/Outliers.R"))
+#replace outliers with means for variables
+variable<-set.Outliers.To.Mean(completeCases$mou_opkv_Range, 1.5)
+
+
