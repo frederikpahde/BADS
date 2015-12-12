@@ -94,6 +94,7 @@ indicies <- which(difference.Median.Mean>apply(completeCases,2,median)/2)
 summary(completeCases[,indicies])
 
 source(paste0(dir, "/Code/Outliers.R"))
+#replace outliers with means for variables
 variable<-set.Outliers.To.Mean(completeCases$mou_opkv_Range, 1.5)
 
 
