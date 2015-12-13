@@ -27,11 +27,12 @@ numericVariables = getNumericVariables(trainingset)
 categoricVariables <- trainingset[setdiff(colnames(trainingset), colnames(numericVariables))]
 
 #plots hists of all 138 numeric variables
-plotHists(numericVariables, 5)
+#plotHists(numericVariables, 5)
 
 ##Missing Value Handling
 source(paste0(dir,"/Code/missingValueHandler.R"))
-completeCases <- getImputedData(numericVariables)
+numericCompleteCases <- getImputedData(numericVariables)
+categoricCompleteCases <- getImputedData(categoricVariables)
 
 #completeInds <- complete.cases(t(numericVariables))
 #completeCases = numericVariables[completeInds]
