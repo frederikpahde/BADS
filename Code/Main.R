@@ -33,6 +33,7 @@ categoricVariables <- trainingset[setdiff(colnames(trainingset), colnames(numeri
 source(paste0(dir,"/Code/missingValueHandler.R"))
 numericCompleteCases <- getImputedData(numericVariables)
 categoricCompleteCases <- getImputedData(categoricVariables)
+completeCases <- getImputedData(trainingset)
 
 #completeInds <- complete.cases(t(numericVariables))
 #completeCases = numericVariables[completeInds]
@@ -48,7 +49,7 @@ getAccuracy <- function(model, testSet){
 }
 
 n <- 10
-dataset = completeCases[1:10000,]
+dataset = completeCases[1:50000,]
 setSize = round(dim(dataset)[1]/n)
 shuffledDataset <- dataset[sample(nrow(dataset)),]
 avg=0

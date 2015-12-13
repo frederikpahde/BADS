@@ -12,3 +12,9 @@ getMissingValueRate <- function(col){
   amount = sum(as.numeric(sapply(col, is.na)))
   return(amount/length(col))
 }
+
+setNA <- function(v, dv){
+  inds <- v == dv
+  v[inds] = NA
+  return(v)
+}
