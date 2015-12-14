@@ -1,33 +1,20 @@
 dir <- Sys.getenv('BADS_Path')   
 source(paste0(dir, "/Code/Utils.R"))
 source(paste0(dir, "/Code/PlotHelper.R"))
-print("tesfhsd")
+
 #Script to install and load needed packages
 source(paste0(dir, "/Code/Init.R")) 
 
 #Load Data
 source(paste0(dir, "/Code/DataLoader.R"))
 trainingset = getTrainigset(dir)
-
-#Exploratory Data Analysis
-#churn =1
-subsetData_churn_true<-trainingset[trainingset$churn==1,]
-#churn = 0
-subsetData_churn_false<-trainingset[trainingset$churn==0,]
-
-
-
-hist(trainingset$adults, main = "Number of Adults")
-hist(trainingset$age1, col="blue", main = "Age first household member")
-hist(trainingset$age2, col="red", add=TRUE)
-legend("topright", c("First Household Member","Second Household Member"),lty=c(1,1), lwd=c(2.5,2.5),col=c("blue","red"))
-
-
 numericVariables = getNumericVariables(trainingset)
 categoricVariables <- trainingset[setdiff(colnames(trainingset), colnames(numericVariables))]
 
-#plots hists of all 138 numeric variables
-#plotHists(numericVariables, 5)
+#Exploratory Data Analysis
+source(paste0(dir, "/Code/ExploratoryDataAnalysis.R"))
+createUsefulPlots(trainingset, numericVariables, categoricVariables)
+
 
 ##Missing Value Handling
 source(paste0(dir,"/Code/missingValueHandler.R"))
@@ -35,19 +22,11 @@ numericCompleteCases <- getImputedData(numericVariables)
 categoricCompleteCases <- getImputedData(categoricVariables)
 completeCases <- getImputedData(trainingset)
 
-#completeInds <- complete.cases(t(numericVariables))
-#completeCases = numericVariables[completeInds]
-#corrplot(cor(completeCases))
 
+#Train Models
+source(paste0(dir, "/Code/ModelTrainer.R"))
 
-
-getAccuracy <- function(model, testSet){
-  pred <- predict(model, newdata=testSet, type="response")
-  class <- round(pred)
-  confustionTable <- CrossTable(testSet$churn, class, prop.c=FALSE)$t
-  return((confustionTable[1,1]+confustionTable[1,2])/length(y))
-}
-
+##10 Fold CV for Logistic Regression
 n <- 10
 dataset = completeCases[1:50000,]
 setSize = round(dim(dataset)[1]/n)
