@@ -1,7 +1,7 @@
 
 #behandelt die ganze Matrix
 handle.Outliers.for.Matrix<-function(data, factor){
-  data<-apply(data,2, function(x) x<-set.Outliers.To.Antene(x,factor))
+  data<-apply(data,2, function(x) if(is.numeric(x)){ x<-set.Outliers.To.Antene(x,factor)})
   return (data)
 }
 
