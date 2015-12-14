@@ -1,33 +1,20 @@
 dir <- Sys.getenv('BADS_Path')   
 source(paste0(dir, "/Code/Utils.R"))
 source(paste0(dir, "/Code/PlotHelper.R"))
-print("tesfhsd")
+
 #Script to install and load needed packages
 source(paste0(dir, "/Code/Init.R")) 
 
 #Load Data
 source(paste0(dir, "/Code/DataLoader.R"))
 trainingset = getTrainigset(dir)
-
-#Exploratory Data Analysis
-#churn =1
-subsetData_churn_true<-trainingset[trainingset$churn==1,]
-#churn = 0
-subsetData_churn_false<-trainingset[trainingset$churn==0,]
-
-
-
-hist(trainingset$adults, main = "Number of Adults")
-hist(trainingset$age1, col="blue", main = "Age first household member")
-hist(trainingset$age2, col="red", add=TRUE)
-legend("topright", c("First Household Member","Second Household Member"),lty=c(1,1), lwd=c(2.5,2.5),col=c("blue","red"))
-
-
 numericVariables = getNumericVariables(trainingset)
 categoricVariables <- trainingset[setdiff(colnames(trainingset), colnames(numericVariables))]
 
-#plots hists of all 138 numeric variables
-#plotHists(numericVariables, 5)
+#Exploratory Data Analysis
+source(paste0(dir, "/Code/ExploratoryDataAnalysis.R"))
+createUsefulPlots(trainingset, numericVariables, categoricVariables)
+
 
 ##Missing Value Handling
 source(paste0(dir,"/Code/missingValueHandler.R"))
@@ -35,19 +22,11 @@ numericCompleteCases <- getImputedData(numericVariables)
 categoricCompleteCases <- getImputedData(categoricVariables)
 completeCases <- getImputedData(trainingset)
 
-#completeInds <- complete.cases(t(numericVariables))
-#completeCases = numericVariables[completeInds]
-corrplot(cor(completeCases))
 
+#Train Models
+source(paste0(dir, "/Code/ModelTrainer.R"))
 
-
-getAccuracy <- function(model, testSet){
-  pred <- predict(model, newdata=testSet, type="response")
-  class <- round(pred)
-  confustionTable <- CrossTable(testSet$churn, class, prop.c=FALSE)$t
-  return((confustionTable[1,1]+confustionTable[1,2])/length(y))
-}
-
+##10 Fold CV for Logistic Regression
 n <- 10
 dataset = completeCases[1:50000,]
 setSize = round(dim(dataset)[1]/n)
@@ -89,57 +68,6 @@ cleanedDataCoplete<-completeCases[,-highlyCorrelated]
 colunmNames<-colnames(completeCases)[highlyCorrelated]
 cleanedOriginalData<-trainingset[,!(names(trainingset) %in% colunmNames)]
 
-##############################################################################################
-
-#high dimensional data
-#install.packages("HighDimOut")
-#library(HighDimOut)
-
-#test<-cleanedDataCoplete[1:20,1:25]
-
-#tim1<-Func.ABOD(test,basic=FALSE, .9) 
-#braucht bei mir ewig für 0.01 prozent im 3D SPACE mit allen Obs (nach 1h noch kein Ergebnis)
-#angle-based outlier detection (ABOD) algorithm, calculates the outlier due to there angel base
-#small value = outlier
-#high value = no outlier;explanation on the LMU slides
-
-#plot(tim1)
-#max(tim1)
-
-
-#########################################################################
-install.packages("HighDimOut")
-library(HighDimOut)
-
-
-test<-cleanedDataCoplete[1:100,1:37]
-tim2<- Func.FBOD(test, iter=10, k.nn=37) # cannot allocate a vector of 3.5 Gb
-#tim is calculated with LOF
-# value <<1 the point is in the cluster; value >> the point is far away from cluster
-
-plot(tim2)
-#tim2 shows much better solutions than tim1!!!
-#WHY? Berechnet mit LOF, zwar nicht mit Angel; dennoch stärker für die Anwendung (erster Eindruck)
-
-
-show.outlier<-tim2[tim2>=2] # TRUE/FALSE Vector which shows all the outliers (value 2 is manuel, lets discuss this)
-
-test[tim2>=2,]
-
-row.index<-which((tim2>=2)==TRUE)
-
-for(i in 1:length(row.index)){
-  paste("Potential outlier at row", row.index[i], sep = " ")
-}
-
-class(tim2) #numeric
-typeof(tim2) #double
-length(tim2) #50, value for all observations
-tim[1:3]
-
-
-###########################################################################################
-
 
 #HANDLING OUTLIERS
 #completeCases has 91 variables
@@ -154,13 +82,5 @@ source(paste0(dir, "/Code/Outliers.R"))
 variable<-set.Outliers.To.Mean(completeCases$mou_opkv_Range, 1.5)
 
 
-#############################
 
-# detect outliers by chi-squared-test
-# very many outliers detected, output not easy to use
 
-install.packages("extremevalues")
-library("extremevalues")
-
-K <- getOutliers(completeCases$blck_vce_Mean, method="I", rho=c(0.01,0.01))
-outlierPlot(completeCases$blck_vce_Mean,K,mode="qq")
