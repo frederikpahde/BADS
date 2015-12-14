@@ -37,7 +37,7 @@ completeCases <- getImputedData(trainingset)
 
 #completeInds <- complete.cases(t(numericVariables))
 #completeCases = numericVariables[completeInds]
-corrplot(cor(completeCases))
+#corrplot(cor(completeCases))
 
 
 
