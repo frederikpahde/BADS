@@ -1,15 +1,23 @@
-set.Outliers.To.Median <- function(variable, whiskerFactor ){
+
+#behandelt die ganze Matrix
+handle.Outliers.for.Matrix<-function(data, factor){
+  data<-apply(data,2, function(x) x<-set.Outliers.To.Antene(x,factor))
+  return (data)
+}
+
+#behandelt eine Spalte
+set.Outliers.To.Antene <- function(variable, whiskerFactor ){
   
   quantiles<-quantile(variable,  probs = c(0.25, 0.75))
   IQA=quantiles["75%"]-quantiles["25%"]
   obere.antene<-quantiles["75%"]+IQA*whiskerFactor
   untere.antene<-quantiles["25%"]-IQA*whiskerFactor
   if(untere.antene<0){
-    not.legal.Values.Indicies<-which(variable<quantiles["25%"], variable>obere.antene)
+    not.legal.Values.Indicies<-which(variable>obere.antene)
   }else{
-    not.legal.Values.Indicies<-which(variable<untere.antene, variable>obere.antene) 
+    not.legal.Values.Indicies<-which(variable>obere.antene) 
   }
-  variable[not.legal.Values.Indicies]<-median(variable)
+  variable[not.legal.Values.Indicies]<-obere.antene
   return (variable)
 }
 
