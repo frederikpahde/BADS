@@ -9,7 +9,7 @@ set.Outliers.To.Mean <- function(variable, whiskerFactor ){
   }else{
     not.legal.Values.Indicies<-which(variable<untere.antene, variable>obere.antene) 
   }
-  variable[not.legal.Values.Indicies]<-mean(variable)
+  variable[not.legal.Values.Indicies]<-median(variable)
   return (variable)
 }
 
@@ -22,7 +22,7 @@ set.Outliers.To.Mean <- function(variable, whiskerFactor ){
 #test<-cleanedDataCoplete[1:20,1:25]
 
 #tim1<-Func.ABOD(test,basic=FALSE, .9) 
-#braucht bei mir ewig für 0.01 prozent im 3D SPACE mit allen Obs (nach 1h noch kein Ergebnis)
+#braucht bei mir ewig f?r 0.01 prozent im 3D SPACE mit allen Obs (nach 1h noch kein Ergebnis)
 #angle-based outlier detection (ABOD) algorithm, calculates the outlier due to there angel base
 #small value = outlier
 #high value = no outlier;explanation on the LMU slides
@@ -43,7 +43,7 @@ tim2<- Func.FBOD(test, iter=10, k.nn=37) # cannot allocate a vector of 3.5 Gb
 
 plot(tim2)
 #tim2 shows much better solutions than tim1!!!
-#WHY? Berechnet mit LOF, zwar nicht mit Angel; dennoch stärker für die Anwendung (erster Eindruck)
+#WHY? Berechnet mit LOF, zwar nicht mit Angel; dennoch st?rker f?r die Anwendung (erster Eindruck)
 
 
 show.outlier<-tim2[tim2>=2] # TRUE/FALSE Vector which shows all the outliers (value 2 is manuel, lets discuss this)
