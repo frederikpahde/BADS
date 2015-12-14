@@ -1,4 +1,6 @@
 dir <- Sys.getenv('BADS_Path')   
+
+#dir<-getwd()
 source(paste0(dir, "/Code/Utils.R"))
 source(paste0(dir, "/Code/PlotHelper.R"))
 print("tesfhsd")
@@ -93,7 +95,7 @@ cleanedOriginalData<-trainingset[,!(names(trainingset) %in% colunmNames)]
 #HANDLING OUTLIERS
 #completeCases has 91 variables
 #find variables which must contain outliers
-difference.Median.Mean<-abs(apply(completeCases,2, function(x) median(x)-mean(x)))
+difference.Median.Median<-abs(apply(completeCases,2, function(x) median(x)-mean(x)))
 #st.d<-apply(completeCases,2,sd)
 indicies <- which(difference.Median.Mean>apply(completeCases,2,median)/2)
 summary(completeCases[,indicies])

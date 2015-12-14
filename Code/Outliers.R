@@ -1,4 +1,4 @@
-set.Outliers.To.Mean <- function(variable, whiskerFactor ){
+set.Outliers.To.Median <- function(variable, whiskerFactor ){
   
   quantiles<-quantile(variable,  probs = c(0.25, 0.75))
   IQA=quantiles["75%"]-quantiles["25%"]
