@@ -86,8 +86,6 @@ colnames(variable)
 data.without.outliers<-apply(dataset,2, function(x) x<-variable[, colnames(x) ])
 
 
-
-
 ###########################################################################
 numericVariables
 
