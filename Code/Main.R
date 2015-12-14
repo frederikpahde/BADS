@@ -15,18 +15,41 @@ categoricVariables <- trainingset[setdiff(colnames(trainingset), colnames(numeri
 
 #Exploratory Data Analysis
 source(paste0(dir, "/Code/ExploratoryDataAnalysis.R"))
-createUsefulPlots(trainingset, numericVariables, categoricVariables)
+#createUsefulPlots(trainingset, numericVariables, categoricVariables)
 
 
 ##Missing Value Handling
 source(paste0(dir,"/Code/missingValueHandler.R"))
-numericCompleteCases <- getImputedData(numericVariables)
-categoricCompleteCases <- getImputedData(categoricVariables)
-completeCases <- getImputedData(trainingset)
+trainingset <- getImputedData(trainingset)
+numericVariables = getNumericVariables(trainingset)
+categoricVariables <- trainingset[setdiff(colnames(trainingset), colnames(trainingset))]
 
+#Outlier Handling
+source(paste0(dir, "/Code/Outliers.R"))
+
+trainingset_withoutOutlier<-handle.Outliers.for.Matrix(numericVariables[,1:(length(completeCases-2))], 1.5)
+
+
+#Split to test/trainigsset
+idx.train <- createDataPartition(y = trainingset$churn, p=0.7, list=FALSE)
+data.tr <- trainingset[idx.train,]
+data.ts <- trainingset[-idx.train,]
 
 #Train Models
 source(paste0(dir, "/Code/ModelTrainer.R"))
+nnet <- trainNnet(data.tr)
+bayes <- trainBayes(data.tr)
+rf <- trainRandomForest(data.tr)
+
+#Predict Test Set
+yhat.nnet <- predict(nnet, newdata = data.ts, type="prob")[,2]
+yhat.bayes <- predict(bayes, newdata = data.ts, type="prob")[,2]
+yhat.rf <- predict(rf, newdata = data.ts, type="prob")[,2]
+
+#Assess Models
+err.nnet <- ModelPerformance(data.ts$churn, yhat.nnet)
+err.bayes <- ModelPerformance(data.ts$churn, yhat.bayes)
+err.rf <- ModelPerformance(data.ts$churn, yhat.rf)
 
 ##10 Fold CV for Logistic Regression
 n <- 10
@@ -78,12 +101,6 @@ difference.Median.Median<-abs(apply(completeCases,2, function(x) median(x)-mean(
 indicies <- which(difference.Median.Median>apply(completeCases,2,median)/2)
 summary(completeCases[,indicies])
 
-source(paste0(dir, "/Code/Outliers.R"))
-#replace outliers with means for variables
-boxplot(completeCases[1:2])
-variable<-handle.Outliers.for.Matrix(completeCases[,1:(length(completeCases-2))], 1.5)
-colnames(variable)
-data.without.outliers<-apply(dataset,2, function(x) x<-variable[, colnames(x) ])
 
 
 ###########################################################################
