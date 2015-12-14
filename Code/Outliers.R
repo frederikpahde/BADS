@@ -14,3 +14,5 @@ set.Outliers.To.Mean <- function(variable, whiskerFactor ){
   variable[not.legal.Values.Indicies]<-mean(variable)
   return (variable)
 }
+
+# question: don't we get too many outliers by using whiskerFactor=1.5? Maybe some of them aren't even outliers
