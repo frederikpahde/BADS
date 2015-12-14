@@ -64,4 +64,11 @@ tim[1:3]
 
 ###########################################################################################
 
+# detect outliers by chi-squared-test
+# very many outliers detected, output not easy to use
 
+install.packages("extremevalues")
+library("extremevalues")
+
+K <- getOutliers(completeCases$blck_vce_Mean, method="I", rho=c(0.01,0.01))
+outlierPlot(completeCases$blck_vce_Mean,K,mode="qq")
