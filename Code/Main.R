@@ -154,3 +154,13 @@ source(paste0(dir, "/Code/Outliers.R"))
 variable<-set.Outliers.To.Mean(completeCases$mou_opkv_Range, 1.5)
 
 
+#############################
+
+# detect outliers by chi-squared-test
+# very many outliers detected, output not easy to use
+
+install.packages("extremevalues")
+library("extremevalues")
+
+K <- getOutliers(completeCases$blck_vce_Mean, method="I", rho=c(0.01,0.01))
+outlierPlot(completeCases$blck_vce_Mean,K,mode="qq")
