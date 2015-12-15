@@ -1,5 +1,6 @@
 dir <- Sys.getenv('BADS_Path')   
 
+setwd("~/Documents/HU Berlin/WI 1516/BADS/Aufgabe/BADS")
 dir<-getwd()
 source(paste0(dir, "/Code/Utils.R"))
 source(paste0(dir, "/Code/PlotHelper.R"))
@@ -26,9 +27,8 @@ categoricVariables <- trainingset[setdiff(colnames(trainingset), colnames(traini
 
 #Outlier Handling
 source(paste0(dir, "/Code/Outliers.R"))
-
-trainingset_withoutOutlier<-handle.Outliers.for.Matrix(numericVariables[,1:(length(completeCases-2))], 1.5)
-
+trainingset_withoutOutlier<- handle.Outliers.for.Matrix(trainingset, 1.5)
+# change_mou - negative Werte
 
 #Split to test/trainigsset
 idx.train <- createDataPartition(y = trainingset$churn, p=0.7, list=FALSE)

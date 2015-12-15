@@ -1,7 +1,8 @@
 
 #behandelt die ganze Matrix
 handle.Outliers.for.Matrix<-function(data, factor){
-  data<-apply(data,2, function(x) if(is.numeric(x)){ x<-set.Outliers.To.Antene(x,factor)})
+  as<-as.vector(sapply(data,is.numeric))
+  data[,as]<-apply(data[,as],2, function(x)  x<-set.Outliers.To.Antene(x,factor))
   return (data)
 }
 
@@ -12,12 +13,12 @@ set.Outliers.To.Antene <- function(variable, whiskerFactor ){
   IQA=quantiles["75%"]-quantiles["25%"]
   obere.antene<-quantiles["75%"]+IQA*whiskerFactor
   untere.antene<-quantiles["25%"]-IQA*whiskerFactor
-  if(untere.antene<0){
-    not.legal.Values.Indicies<-which(variable>obere.antene)
-  }else{
-    not.legal.Values.Indicies<-which(variable>obere.antene) 
-  }
-  variable[not.legal.Values.Indicies]<-obere.antene
+  
+    not.legal.Up.Indicies<-which(variable>obere.antene) 
+    not.legal.Down.Indicies<-which(variable<untere.antene)
+    variable[not.legal.Up.Indicies]<-obere.antene
+    variable[not.legal.Down.Indicies]<-untere.antene
+
   return (variable)
 }
 
