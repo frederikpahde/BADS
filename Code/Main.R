@@ -1,6 +1,5 @@
 dir <- Sys.getenv('BADS_Path')   
 
-dir<-getwd()
 source(paste0(dir, "/Code/Utils.R"))
 source(paste0(dir, "/Code/PlotHelper.R"))
 
