@@ -14,6 +14,14 @@ coeff_out = coef(lr_enet, s = "lambda.1s")
 
 
 data.ts_matrix <- model.matrix(~.,data.ts[,!names(data.ts) %in% "churn"])
-yhat_lr_enet <- predict(lr_enet, newx=data.ts_matrix, type="response", s="lambda.1s")
+yhat.lrenet <- predict(lr_enet, newx=data.ts_matrix, type="response", s="lambda.1s")
 
-err.lr_enet <- ModelPerformance(data.ts$churn, yhat_lr_enet)
+err.lrenet <- ModelPerformance(data.ts$churn, yhat.lrenet)
+
+
+
+#trainlrenet <- function(features_input){
+ # nnGrid <- expand.grid(size=c(2,5,9), decay=c(.1,1,10))
+#  nn.tune <- train(churn~., data = data.tr, method="cv.glmnet", trControl = ctrl, tuneGrid=nnGrid)
+ # return(nn.tune)
+#}
