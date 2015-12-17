@@ -1,13 +1,5 @@
 dir <- Sys.getenv('BADS_Path')   
 
-<<<<<<< HEAD
-#dir<-getwd()
-=======
-
-#setwd("~/Documents/HU Berlin/WI 1516/BADS/Aufgabe/BADS")
-#dir<-getwd()
-
->>>>>>> 37c3c0688c4de9d2abff070dda3ce138c4df4200
 source(paste0(dir, "/Code/Utils.R"))
 source(paste0(dir, "/Code/PlotHelper.R"))
 
@@ -19,6 +11,7 @@ source(paste0(dir, "/Code/DataLoader.R"))
 trainingset = getTrainigset(dir)
 numericVariables = getNumericVariables(trainingset)
 categoricVariables <- trainingset[setdiff(colnames(trainingset), colnames(numericVariables))]
+continousVariablesname <- getContinousset(dir)
 
 #Exploratory Data Analysis
 source(paste0(dir, "/Code/ExploratoryDataAnalysis.R"))
@@ -36,7 +29,27 @@ source(paste0(dir, "/Code/Outliers.R"))
 #z-score outlier handling
 trainingset_withoutOutlier<- handle.Outliers.for.Matrix(trainingset)
 # change_mou - hat negative Werte
+
+
+#Data scaling with z-score
+source(paste0(dir, "/Code/scaling.R"))
+#traingsset überschrieben
+trainingset <- z.scale.data(m=trainingset,continous.var=continousVariablesname)
+#traingsset_withoutOutlier überschrieben
+trainingset_withoutOutlier<- z.scale.data(m=trainingset_withoutOutlier,continous.var=continousVariablesname)
   
+
+#Corelation
+#identify highly corelated coplete veriables (only numeric)
+correlationMatrix <- cor(trainingset)
+#summary(correlationMatrix[upper.tri(correlationMatrix)])
+# find attributes that are highly corrected (ideally >0.75)
+highlyCorrelated <- findCorrelation(correlationMatrix, cutoff=0.90, verbose = FALSE)
+#delete highly corelated columns
+trainingste_woithoutCorelated<-trainingset[,-highlyCorrelated]
+
+
+
 #Split to test/trainigsset
 idx.train <- createDataPartition(y = trainingset$churn, p=0.7, list=FALSE)
 data.tr <- trainingset[idx.train,]
@@ -80,6 +93,7 @@ y = completeCases[1001:2000,]
 CrossTable(y$churn, res, prop.c=FALSE)$t
 
 
+
 #Corelation
 ###############################################################################################
 #identify highly corelated coplete veriables (only numeric)
@@ -109,9 +123,7 @@ indicies <- which(difference.Median.Median>apply(completeCases,2,median)/2)
 summary(completeCases[,indicies])
 
 
-
 ###########################################################################
-numericVariables
 
 difference.Median.Median<-abs(apply(completeCases,2, function(x) median(x)-mean(x)))
 #st.d<-apply(completeCases,2,sd)
