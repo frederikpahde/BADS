@@ -25,7 +25,7 @@ categoricVariables <- trainingset[setdiff(colnames(trainingset), colnames(traini
 
 #Outlier Handling
 source(paste0(dir, "/Code/Outliers.R"))
-trainingset_withoutOutlier<-handle.Outliers.for.Matrix(trainingset[,1:(length(completeCases-2))], 1.5)
+trainingset_withoutOutlier<-handle.Outliers.for.Matrix(trainingset[,1:(length(trainingset-2))], 1.5)
 
 
 #Split to test/trainigsset

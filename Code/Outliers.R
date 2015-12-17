@@ -1,25 +1,42 @@
 
 #behandelt die ganze Matrix
-handle.Outliers.for.Matrix<-function(data, factor){
-  data<-apply(data,2, function(x) if(is.numeric(x)){ x<-set.Outliers.To.Antene(x,factor)})
+handle.Outliers.for.Matrix<-function(data){
+  as<-as.vector(sapply(data,is.numeric))
+  #using the simple boxplot method
+  #data[,as]<-apply(data[,as],2, function(x)  x<-set.Outliers.To.Antene(x,1.5))
+  
+  data[,as]<-apply(data[,as],2, function(x)  x<-z_score.transformatin(x))
+  
   return (data)
 }
 
-#behandelt eine Spalte
+#Boxplot outlier handling
 set.Outliers.To.Antene <- function(variable, whiskerFactor ){
   
   quantiles<-quantile(variable,  probs = c(0.25, 0.75))
   IQA=quantiles["75%"]-quantiles["25%"]
   obere.antene<-quantiles["75%"]+IQA*whiskerFactor
   untere.antene<-quantiles["25%"]-IQA*whiskerFactor
-  if(untere.antene<0){
-    not.legal.Values.Indicies<-which(variable>obere.antene)
-  }else{
-    not.legal.Values.Indicies<-which(variable>obere.antene) 
-  }
-  variable[not.legal.Values.Indicies]<-obere.antene
+  
+    not.legal.Up.Indicies<-which(variable>obere.antene) 
+    not.legal.Down.Indicies<-which(variable<untere.antene)
+    variable[not.legal.Up.Indicies]<-obere.antene
+    variable[not.legal.Down.Indicies]<-untere.antene
+
   return (variable)
 }
+
+z_score.transformatin<-function(variable){
+  mE<-mean(variable)
+  sD<-sd(variable)
+  z_scores<-sapply(variable, function(x) zscore<-(x-mE)/sD) 
+  variable[which(z_scores>3)]<-mE+(3*sD)
+  variable[which(z_scores<(-3))]<-mE-(3*sD)
+  
+  return(variable)
+}
+
+
 
 # question: don't we get too many outliers by using whiskerFactor=1.5? Maybe some of them aren't even outliers
 
