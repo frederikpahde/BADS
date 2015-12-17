@@ -18,3 +18,8 @@ setNA <- function(v, dv){
   v[inds] = NA
   return(v)
 }
+
+Mode <- function(x) {
+  ux <- unique(x)
+  ux[which.max(tabulate(match(x, ux)))]
+}
