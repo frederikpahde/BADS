@@ -15,6 +15,7 @@ source(paste0(dir, "/Code/DataLoader.R"))
 trainingset = getTrainigset(dir)
 numericVariables = getNumericVariables(trainingset)
 categoricVariables <- trainingset[setdiff(colnames(trainingset), colnames(numericVariables))]
+continousVariablesname <- getContinousset(dir)
 
 #Exploratory Data Analysis
 source(paste0(dir, "/Code/ExploratoryDataAnalysis.R"))
@@ -32,6 +33,13 @@ source(paste0(dir, "/Code/Outliers.R"))
 #z-score outlier handling
 trainingset_withoutOutlier<- handle.Outliers.for.Matrix(trainingset)
 # change_mou - hat negative Werte
+
+#Data scaling with z-score
+source(paste0(dir, "/Code/scaling.R"))
+#traingsset überschrieben
+trainingset <- z.scale.data(m=trainingset,continous.var=continousVariablesname)
+#traingsset_withoutOutlier überschrieben
+trainingset_withoutOutlier<- z.scale.data(m=trainingset_withoutOutlier,continous.var=continousVariablesname)
   
 #Split to test/trainigsset
 idx.train <- createDataPartition(y = trainingset$churn, p=0.7, list=FALSE)
@@ -74,6 +82,7 @@ for (i in 1:n) {
 res = round(predict(rf, newdata = completeCases[1001:2000,]))
 y = completeCases[1001:2000,]
 CrossTable(y$churn, res, prop.c=FALSE)$t
+
 
 
 #Corelation
