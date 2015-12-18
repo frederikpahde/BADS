@@ -55,6 +55,15 @@ idx.train <- createDataPartition(y = trainingset$churn, p=0.7, list=FALSE)
 data.tr <- trainingset[idx.train,]
 data.ts <- trainingset[-idx.train,]
 
+
+#Feature selection
+source(paste0(dir, "/Code/FeatureSelection.R"))
+# new trainingset only containing selected features
+trainingset_SelectedFeatures <- trainingset[,names(trainingset) %in% retained_features]
+trainingset_withoutOutlier_SelectedFeatures <- trainingset_withoutOutlier[,names(trainingset_withoutOutlier) %in% retained_features]
+
+
+
 #Train Models
 source(paste0(dir, "/Code/ModelTrainer.R"))
 nnet <- trainNnet(data.tr)
