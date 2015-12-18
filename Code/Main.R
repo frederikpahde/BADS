@@ -12,6 +12,7 @@ source(paste0(dir, "/Code/DataLoader.R"))
   #trainingset_orig = getTrainigset(dir)
   #numericVariables = getNumericVariables(trainingset)
   #categoricVariables <- trainingset[setdiff(colnames(trainingset), colnames(numericVariables))]
+continousVariablesname <- getContinousset(dir)
 
 #Exploratory Data Analysis
 source(paste0(dir, "/Code/ExploratoryDataAnalysis.R"))
@@ -35,6 +36,15 @@ source(paste0(dir, "/Code/Outliers.R"))
 trainingset_withoutOutlier<- handle.Outliers.for.Matrix(trainingset)
 # change_mou - hat negative Werte
 
+
+#Data scaling with z-score
+source(paste0(dir, "/Code/scaling.R"))
+#traingsset überschrieben
+trainingset <- z.scale.data(m=trainingset,continous.var=continousVariablesname)
+#traingsset_withoutOutlier überschrieben
+trainingset_withoutOutlier<- z.scale.data(m=trainingset_withoutOutlier,continous.var=continousVariablesname)
+  
+
 #Corelation
 #identify highly corelated coplete veriables (only numeric)
 correlationMatrix <- cor(trainingset)
@@ -43,6 +53,7 @@ correlationMatrix <- cor(trainingset)
 highlyCorrelated <- findCorrelation(correlationMatrix, cutoff=0.90, verbose = FALSE)
 #delete highly corelated columns
 trainingste_woithoutCorelated<-trainingset[,-highlyCorrelated]
+
 
 
 #Split to test/trainigsset
@@ -87,6 +98,35 @@ res = round(predict(rf, newdata = completeCases[1001:2000,]))
 y = completeCases[1001:2000,]
 CrossTable(y$churn, res, prop.c=FALSE)$t
 
+
+
+#Corelation
+###############################################################################################
+#identify highly corelated coplete veriables (only numeric)
+correlationMatrix <- cor(completeCases[,])
+print(correlationMatrix)
+
+# find attributes that are highly corrected (ideally >0.75)
+#verbose=TRUE
+highlyCorrelated <- findCorrelation(correlationMatrix, cutoff=0.75)
+# print indexes of highly correlated attributes
+print(highlyCorrelated)
+head(completeCases[,highlyCorrelated])
+#delete highly corelated columns
+cleanedDataCoplete<-completeCases[,-highlyCorrelated]
+
+#remove highly corelated from the original data
+colunmNames<-colnames(completeCases)[highlyCorrelated]
+cleanedOriginalData<-trainingset[,!(names(trainingset) %in% colunmNames)]
+
+
+#HANDLING OUTLIERS
+#completeCases has 91 variables
+#find variables which must contain outliers
+difference.Median.Median<-abs(apply(completeCases,2, function(x) median(x)-mean(x)))
+#st.d<-apply(completeCases,2,sd)
+indicies <- which(difference.Median.Median>apply(completeCases,2,median)/2)
+summary(completeCases[,indicies])
 
 
 ###########################################################################
