@@ -1,4 +1,4 @@
-
+############### For 1st iteration ################
 #behandelt die ganze Matrix
 handle.Outliers.for.Matrix<-function(data){
   as<-as.vector(sapply(data,is.numeric))
@@ -36,7 +36,28 @@ z_score.transformatin<-function(variable){
   return(variable)
 }
 
+############### For 2nd iteration ################
+#multivariate outliers - combinations of several variables
+# based on the mahalanobis distance
 
+#multidimentional outlier handling
+my.dataframe<-trainingset[1:100,2:3]
+#function from Outliers.R
+#detect.outliers.mahaladonis(my.dataframe, .975)
+#use mvoutlier package
+outlier.plot<-aq.plot(my.dataframe, delta=qchisq(0.975, df=ncol(my.dataframe)), quan=1/2, alpha=0.05)
+outliers<-outlier.plot$outliers
+
+
+#returns the outliers indizies of a data frame with the corresponding mahalanobis distance (data is a dataframe, 0<chi.quantil<1)
+detect.outliers.mahaladonis<-function(data, chi.quantil){
+#calculate mahalanobis distance for all samples  
+m.dist<-mahalanobis(data, colMeans(data), cov(data))
+quantile<-qchisq(chi.quantil, df=length(data[1,])) 
+outliers.inizies<-m.dist[m.dist>quantile]
+return(outliers.inizies)
+
+}
 
 # question: don't we get too many outliers by using whiskerFactor=1.5? Maybe some of them aren't even outliers
 

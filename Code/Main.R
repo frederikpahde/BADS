@@ -32,16 +32,15 @@ categoricVariables <- trainingset[setdiff(colnames(trainingset), colnames(numeri
 
 #Outlier Handling
 source(paste0(dir, "/Code/Outliers.R"))
-#z-score outlier handling
+#z-score one-dimentional outlier handling
 trainingset_withoutOutlier<- handle.Outliers.for.Matrix(trainingset)
-# change_mou - hat negative Werte
 
 
 #Data scaling with z-score
 source(paste0(dir, "/Code/scaling.R"))
-#traingsset überschrieben
+#traingsset ?berschrieben
 trainingset <- z.scale.data(m=trainingset,continous.var=continousVariablesname)
-#traingsset_withoutOutlier überschrieben
+#traingsset_withoutOutlier ?berschrieben
 trainingset_withoutOutlier<- z.scale.data(m=trainingset_withoutOutlier,continous.var=continousVariablesname)
   
 
