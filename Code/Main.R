@@ -35,41 +35,41 @@ source(paste0(dir, "/Code/Outliers.R"))
 #z-score one-dimentional outlier handling
 trainingset_withoutOutlier<- handle.Outliers.for.Matrix(trainingset)
 
-trainingset<-trainingset_withoutOutlier
 
 #Data scaling with z-score
 source(paste0(dir, "/Code/scaling.R"))
 #traingsset
 trainingset <- z.scale.data(m=trainingset,continous.var=continousVariablesname)
 #traingsset_withoutOutlier
-#trainingset_withoutOutlier_scaled<- z.scale.data(m=trainingset_withoutOutlier,continous.var=continousVariablesname)
+trainingset_withoutOutlier<- z.scale.data(m=trainingset_withoutOutlier,continous.var=continousVariablesname)
   
 
 #Corelation
 #identify highly corelated coplete veriables (only numeric)
 correlationMatrix <- cor(trainingset)
+correlationMatrix2 <- cor(trainingset_withoutOutlier)
 #summary(correlationMatrix[upper.tri(correlationMatrix)])
 # find attributes that are highly corrected (ideally >0.75)
 highlyCorrelated <- findCorrelation(correlationMatrix, cutoff=0.90, verbose = FALSE)
+highlyCorrelated2 <- findCorrelation(correlationMatrix2, cutoff=0.90, verbose = FALSE)
 #delete highly corelated columns
-trainingset_woithoutCorelated<-trainingset[,-highlyCorrelated]
+trainingset<-trainingset[,-highlyCorrelated]
 
-trainingset<-trainingset_woithoutCorelated
+trainingset_withoutOutlier<-trainingset_withoutOutlier[,-highlyCorrelated2]
+
+#Feature selection
+source(paste0(dir, "/Code/FeatureSelection.R"))
+# new trainingset only containing selected features
+
+trainingset <- trainingset[,names(trainingset) %in% retained_features]
+
+trainingset_withoutOutlier <- trainingset_withoutOutlier[,names(trainingset_withoutOutlier) %in% retained_features]
 
 
 #Split to test/trainigsset
 idx.train <- createDataPartition(y = trainingset$churn, p=0.7, list=FALSE)
 data.tr <- trainingset[idx.train,]
 data.ts <- trainingset[-idx.train,]
-
-
-#Feature selection
-source(paste0(dir, "/Code/FeatureSelection.R"))
-# new trainingset only containing selected features
-trainingset_SelectedFeatures <- trainingset[,names(trainingset) %in% retained_features]
-#trainingset_withoutOutlier_SelectedFeatures <- trainingset_withoutOutlier[,names(trainingset_withoutOutlier) %in% retained_features]
-trainingset<-trainingset_SelectedFeatures
-
 
 #Train Models
 source(paste0(dir, "/Code/ModelTrainer.R"))
