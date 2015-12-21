@@ -9,6 +9,6 @@ getTestset <- function(dir){
 }
 
 getContinousset <- function(dir){
-  data <- read.csv(paste0(dir, "/data/continous_variablenames.csv",header=TRUE, sep = ";"))
+  data <- read.csv(paste0(dir, "/data/continous_variablenames.csv"),header=TRUE, sep = ";")
   return(data)
 }
