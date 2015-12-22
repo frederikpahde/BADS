@@ -6,12 +6,16 @@ excludeSparseData<-function(df, threshold){
 getImputedData<-function(data){
   data <- handleDefaultValues(data)
   data <- excludeSparseData(data, 0.5)
-  imputed <- c()
+  list <- list(NULL)
   for (i in 1:ncol(data)) {
-    col <- Hmisc::impute(data[,i], fun=median)
-    imputed <- c(imputed, col)
+    if (is.numeric(data[,i])){
+      col <- Hmisc::impute(data[,i], fun = median)
+    }else{
+      col <- Hmisc::impute(data[,i], fun = Mode)
+    }
+    list[[i]] <- col
   }
-  df <- data.frame(matrix(imputed, ncol = ncol(data)))
+  df <- as.data.frame(list)
   colnames(df) <- colnames(data)
   return(df)
 }
@@ -29,5 +33,6 @@ handleDefaultValues<-function(data){
   data$hnd_webcap = setNA(data$hnd_webcap, 'UNKW')
   data$marital = setNA(data$marital, 'U')
   data$new_cell = setNA(data$new_cell, 'U')
+  data$cartype = setNA(data$cartype, '')
   return(data)
 }

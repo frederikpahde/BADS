@@ -3,7 +3,7 @@
 
 #contin.var <- data.frame((read.csv("continous_variablenames.csv",header=TRUE, sep = ";")))
 
-z.scale <- function(v){#funtioniert nicht bei hochen samples?
+z.scale <- function(v){
   
   m<- mean(v)
   s<- sd(v)

@@ -8,7 +8,7 @@ getAccuracy <- function(model, testSet){
 ModelPerformance <- function(y, yhat, cutoff=0.5){
   #Brier Score
   ynum <- as.numeric(y)-1
-  bs <- 1/length(y)*sum((ynum-yhat)^2)
+  bs <- (1/length(y))*sum((ynum-yhat)^2)
   
   #Classification Error
   c <- factor(yhat >= cutoff, labels = c("good", "bad"))

@@ -1,4 +1,4 @@
-dir <- Sys.getenv('BADS_Path')   
+# dir <- Sys.getenv('BADS_Path')   
 
 source(paste0(dir, "/Code/Utils.R"))
 source(paste0(dir, "/Code/PlotHelper.R"))
@@ -8,9 +8,10 @@ source(paste0(dir, "/Code/Init.R"))
 
 #Load Data
 source(paste0(dir, "/Code/DataLoader.R"))
-trainingset = getTrainigset(dir)
-numericVariables = getNumericVariables(trainingset)
-categoricVariables <- trainingset[setdiff(colnames(trainingset), colnames(numericVariables))]
+#Imputed Data is loaded
+  #trainingset_orig = getTrainigset(dir)
+  #numericVariables = getNumericVariables(trainingset)
+  #categoricVariables <- trainingset[setdiff(colnames(trainingset), colnames(numericVariables))]
 continousVariablesname <- getContinousset(dir)
 
 #Exploratory Data Analysis
@@ -20,33 +21,48 @@ source(paste0(dir, "/Code/ExploratoryDataAnalysis.R"))
 
 ##Missing Value Handling
 source(paste0(dir,"/Code/missingValueHandler.R"))
-trainingset <- getImputedData(trainingset)
+  #trainingset <- getImputedData(trainingset)
+  #numericVariables = getNumericVariables(trainingset)
+  #categoricVariables <- trainingset[setdiff(colnames(trainingset), colnames(trainingset))]
+  #write.csv(trainingset, paste0(dir, "/Data/ImputedData.csv"), sep = ",")
+
+trainingset <- read.csv(paste0(dir, "/Data/ImputedData.csv"), sep = ",")
 numericVariables = getNumericVariables(trainingset)
-categoricVariables <- trainingset[setdiff(colnames(trainingset), colnames(trainingset))]
+categoricVariables <- trainingset[setdiff(colnames(trainingset), colnames(numericVariables))]
 
 #Outlier Handling
 source(paste0(dir, "/Code/Outliers.R"))
-#z-score outlier handling
+#z-score one-dimentional outlier handling
 trainingset_withoutOutlier<- handle.Outliers.for.Matrix(trainingset)
-# change_mou - hat negative Werte
 
 
 #Data scaling with z-score
 source(paste0(dir, "/Code/scaling.R"))
-#traingsset überschrieben
+#traingsset
 trainingset <- z.scale.data(m=trainingset,continous.var=continousVariablesname)
-#traingsset_withoutOutlier überschrieben
+#traingsset_withoutOutlier
 trainingset_withoutOutlier<- z.scale.data(m=trainingset_withoutOutlier,continous.var=continousVariablesname)
   
 
 #Corelation
 #identify highly corelated coplete veriables (only numeric)
 correlationMatrix <- cor(trainingset)
+correlationMatrix2 <- cor(trainingset_withoutOutlier)
 #summary(correlationMatrix[upper.tri(correlationMatrix)])
 # find attributes that are highly corrected (ideally >0.75)
 highlyCorrelated <- findCorrelation(correlationMatrix, cutoff=0.90, verbose = FALSE)
+highlyCorrelated2 <- findCorrelation(correlationMatrix2, cutoff=0.90, verbose = FALSE)
 #delete highly corelated columns
-trainingste_woithoutCorelated<-trainingset[,-highlyCorrelated]
+trainingset<-trainingset[,-highlyCorrelated]
+
+trainingset_withoutOutlier<-trainingset_withoutOutlier[,-highlyCorrelated2]
+
+#Feature selection
+# source(paste0(dir, "/Code/FeatureSelection.R"))
+# new dataset only containing selected features
+selectedFeatures <- getSelectedFeatureSet(dir)
+
+
 
 
 
@@ -54,15 +70,6 @@ trainingste_woithoutCorelated<-trainingset[,-highlyCorrelated]
 idx.train <- createDataPartition(y = trainingset$churn, p=0.7, list=FALSE)
 data.tr <- trainingset[idx.train,]
 data.ts <- trainingset[-idx.train,]
-
-
-#Feature selection
-#source(paste0(dir, "/Code/FeatureSelection.R"))
-# new trainingset only containing selected features
-#trainingset_SelectedFeatures <- trainingset[,names(trainingset) %in% retained_features]
-#trainingset_withoutOutlier_SelectedFeatures <- trainingset_withoutOutlier[,names(trainingset_withoutOutlier) %in% retained_features]
-selectedFeatures <- getSelectedFeatureSet(dir)
-
 
 #Train Models
 source(paste0(dir, "/Code/ModelTrainer.R"))

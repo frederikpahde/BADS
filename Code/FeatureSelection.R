@@ -22,6 +22,12 @@ filtered_nb <- sbf(features_input, as.factor(churn_var[,1]),
   
 # selected features
 retained_features <- transpose(as.data.frame(features_rf$optVariables))
+trainingset_SelectedFeatures <- trainingset[,names(trainingset) %in% retained_features]
+trainingset_withoutOutlier_SelectedFeatures <- trainingset_withoutOutlier[,names(trainingset_withoutOutlier) %in% retained_features]
+
+trainingset <- trainingset[,names(trainingset) %in% retained_features]
+
+trainingset_withoutOutlier <- trainingset_withoutOutlier[,names(trainingset_withoutOutlier) %in% retained_features]
 
 
 ############### For 2nd iteration ################
