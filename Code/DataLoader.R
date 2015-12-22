@@ -12,3 +12,8 @@ getContinousset <- function(dir){
   data <- read.csv(paste0(dir, "/data/continous_variablenames.csv",header=TRUE, sep = ";"))
   return(data)
 }
+
+getSelectedFeatureSet <- function(dir){
+  data <- read.csv(paste0(dir, "/data/feature_selection_variablenames.csv",header=TRUE, sep = ";"))
+  return(data)
+}

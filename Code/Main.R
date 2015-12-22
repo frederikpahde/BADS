@@ -57,11 +57,11 @@ data.ts <- trainingset[-idx.train,]
 
 
 #Feature selection
-source(paste0(dir, "/Code/FeatureSelection.R"))
+#source(paste0(dir, "/Code/FeatureSelection.R"))
 # new trainingset only containing selected features
-trainingset_SelectedFeatures <- trainingset[,names(trainingset) %in% retained_features]
-trainingset_withoutOutlier_SelectedFeatures <- trainingset_withoutOutlier[,names(trainingset_withoutOutlier) %in% retained_features]
-
+#trainingset_SelectedFeatures <- trainingset[,names(trainingset) %in% retained_features]
+#trainingset_withoutOutlier_SelectedFeatures <- trainingset_withoutOutlier[,names(trainingset_withoutOutlier) %in% retained_features]
+selectedFeatures <- getSelectedFeatureSet(dir)
 
 
 #Train Models
