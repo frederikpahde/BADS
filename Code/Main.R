@@ -1,5 +1,7 @@
-# dir <- Sys.getenv('BADS_Path')   
+dir <- Sys.getenv('BADS_Path')   
 
+setwd("~/Documents/HU Berlin/WI 1516/BADS/Aufgabe/BADS")
+dir<-getwd()
 source(paste0(dir, "/Code/Utils.R"))
 source(paste0(dir, "/Code/PlotHelper.R"))
 
@@ -9,15 +11,14 @@ source(paste0(dir, "/Code/Init.R"))
 #Load Data
 source(paste0(dir, "/Code/DataLoader.R"))
 #Imputed Data is loaded
-  #trainingset_orig = getTrainigset(dir)
-  #numericVariables = getNumericVariables(trainingset)
-  #categoricVariables <- trainingset[setdiff(colnames(trainingset), colnames(numericVariables))]
-continousVariablesname <- getContinousset(dir)
-
+  trainingset_orig = getTrainigset(dir)
+  numericVariables = getNumericVariables(trainingset_orig)
+  categoricVariables <- trainingset[setdiff(colnames(trainingset), colnames(numericVariables))]
+  continousVariablesname <- getContinousset(dir)
+trainingset<-trainingset_orig
 #Exploratory Data Analysis
 source(paste0(dir, "/Code/ExploratoryDataAnalysis.R"))
 #createUsefulPlots(trainingset, numericVariables, categoricVariables)
-
 
 ##Missing Value Handling
 source(paste0(dir,"/Code/missingValueHandler.R"))
@@ -25,7 +26,6 @@ source(paste0(dir,"/Code/missingValueHandler.R"))
   #numericVariables = getNumericVariables(trainingset)
   #categoricVariables <- trainingset[setdiff(colnames(trainingset), colnames(trainingset))]
   #write.csv(trainingset, paste0(dir, "/Data/ImputedData.csv"), sep = ",")
-
 trainingset <- read.csv(paste0(dir, "/Data/ImputedData.csv"), sep = ",")
 numericVariables = getNumericVariables(trainingset)
 categoricVariables <- trainingset[setdiff(colnames(trainingset), colnames(numericVariables))]
@@ -46,11 +46,11 @@ trainingset_withoutOutlier<- z.scale.data(m=trainingset_withoutOutlier,continous
 
 #Corelation
 #identify highly corelated coplete veriables (only numeric)
-correlationMatrix <- cor(trainingset)
+correlationMatrix <- cor(numericVariables)
 correlationMatrix2 <- cor(trainingset_withoutOutlier)
 #summary(correlationMatrix[upper.tri(correlationMatrix)])
 # find attributes that are highly corrected (ideally >0.75)
-highlyCorrelated <- findCorrelation(correlationMatrix, cutoff=0.90, verbose = FALSE)
+highlyCorrelated <- findCorrelation(correlationMatrix, cutoff=0.99, verbose = FALSE)
 highlyCorrelated2 <- findCorrelation(correlationMatrix2, cutoff=0.90, verbose = FALSE)
 #delete highly corelated columns
 trainingset<-trainingset[,-highlyCorrelated]
