@@ -1,5 +1,7 @@
 dir <- Sys.getenv('BADS_Path')   
 
+setwd("~/Documents/HU Berlin/WI 1516/BADS/Aufgabe/BADS")
+dir<-getwd()
 source(paste0(dir, "/Code/Utils.R"))
 source(paste0(dir, "/Code/PlotHelper.R"))
 
@@ -43,26 +45,17 @@ trainingset_withoutOutlier<- z.scale.data(m=trainingset_withoutOutlier,continous
   
 
 #Corelation
-#identify highly corelated coplete veriables (only numeric)
-correlationMatrix <- cor(numericVariables)
-correlationMatrix2 <- cor(trainingset_withoutOutlier)
-#summary(correlationMatrix[upper.tri(correlationMatrix)])
-# find attributes that are highly corrected (ideally >0.75)
-highlyCorrelated <- findCorrelation(correlationMatrix, cutoff=0.99, verbose = FALSE)
-highlyCorrelated2 <- findCorrelation(correlationMatrix2, cutoff=0.90, verbose = FALSE)
-#delete highly corelated columns
-trainingset<-trainingset[,-highlyCorrelated]
+#identify highly corelated coplete veriables
+source(paste0(dir, "/Code/Correlation.R"))
+data<-trainingset_withoutOutlier
+trainingset_withoutCorrelated<-handle.highly.correlated.for.Matrix(data, .75, 
+        which(colnames(data)=="Customer_ID"|colnames(data)=="churn"))
 
-trainingset_withoutOutlier<-trainingset_withoutOutlier[,-highlyCorrelated2]
 
 #Feature selection
 # source(paste0(dir, "/Code/FeatureSelection.R"))
 # new dataset only containing selected features
 selectedFeatures <- getSelectedFeatureSet(dir)
-
-
-
-
 
 #Split to test/trainigsset
 idx.train <- createDataPartition(y = trainingset$churn, p=0.7, list=FALSE)
