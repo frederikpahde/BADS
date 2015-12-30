@@ -6,12 +6,13 @@ getAccuracy <- function(model, testSet){
 }
 
 ModelPerformance <- function(y, yhat, cutoff=0.5){
-  #Brier Score
-  ynum <- as.numeric(y)-1
-  bs <- (1/length(y))*sum((ynum-yhat)^2)
+  ##Brier Score
+  #ynum <- as.numeric(y)-1
+  #bs <- (1/length(y))*sum((ynum-yhat)^2)
   
   #Classification Error
   c <- factor(yhat >= cutoff, labels = c("good", "bad"))
+  #c <- as.numeric(yhat >= cutoff)
   errorRate <- 1- sum(as.numeric(c == y))/length(y)
   
   return(errorRate)
@@ -33,5 +34,10 @@ trainRandomForest <- function(data.tr){
 
 trainBayes <- function(data.tr){
   bayes.tune <- train(churn~., data = data.tr, method="bayesglm", trControl = ctrl)
+  return(bayes.tune)
+}
+
+trainLogisticRegression <- function(data.tr){
+  bayes.tune <- train(churn~., data = data.tr, method="glm", trControl = ctrl)
   return(bayes.tune)
 }
