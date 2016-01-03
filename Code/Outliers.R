@@ -41,12 +41,12 @@ z_score.transformatin<-function(variable){
 # based on the mahalanobis distance
 
 #multidimentional outlier handling
-my.dataframe<-trainingset[1:100,2:3]
+#my.dataframe<-trainingset[1:100,2:3]
 #function from Outliers.R
 #detect.outliers.mahaladonis(my.dataframe, .975)
 #use mvoutlier package
-outlier.plot<-aq.plot(my.dataframe, delta=qchisq(0.975, df=ncol(my.dataframe)), quan=1/2, alpha=0.05)
-outliers<-outlier.plot$outliers
+#outlier.plot<-aq.plot(my.dataframe, delta=qchisq(0.975, df=ncol(my.dataframe)), quan=1/2, alpha=0.05)
+#outliers<-outlier.plot$outliers
 
 
 #returns the outliers indizies of a data frame with the corresponding mahalanobis distance (data is a dataframe, 0<chi.quantil<1)
@@ -78,8 +78,8 @@ return(outliers.inizies)
 
 
 #########################################################################
-#install.packages("HighDimOut")
-#library(HighDimOut)
+
+auskommentiert <- function(){
 
 
 #test<-cleanedDataCoplete[1:100,1:37]
@@ -116,5 +116,10 @@ return(outliers.inizies)
 #install.packages("extremevalues")
 #library("extremevalues")
 
+
 #K <- getOutliers(completeCases$blck_vce_Mean, method="I", rho=c(0.01,0.01))
 #outlierPlot(completeCases$blck_vce_Mean,K,mode="qq")
+
+K <- getOutliers(completeCases$blck_vce_Mean, method="I", rho=c(0.01,0.01))
+outlierPlot(completeCases$blck_vce_Mean,K,mode="qq")
+}
