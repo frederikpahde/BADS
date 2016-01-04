@@ -32,7 +32,7 @@ trainNnet <- function(data.tr){
 }
 
 trainRandomForest <- function(data.tr){
-  rfGrid <- expand.grid(mtry=c(3,5,7,9))
+  rfGrid <- expand.grid(mtry=c(7,9,11,15))
   rf.tune <- train(churn~., data = data.tr, method="rf", trControl = ctrl, tuneGrid=rfGrid)
   return(rf.tune)
 }
@@ -50,7 +50,7 @@ trainKNN <- function(data.tr){
 }
 
 trainSVM <- function(data.tr){
-  svmGrid <- expand.grid(cost=c(0.2,0.3,0.4), gamma=c(2,3,4))
+  svmGrid <- expand.grid(gamma=c(2), cost=c(0.01,0.1,0.2,0.3))
   svm.tune <- train(churn~., data = data.tr, method="svmLinear2", trControl = ctrl, tuneGrid=svmGrid)
   return(svm.tune)
 }
@@ -71,3 +71,12 @@ trainLogisticRegression <- function(data.tr){
   bayes.tune <- train(churn~., data = data.tr, method="glm", trControl = ctrl)
   return(bayes.tune)
 }
+
+#Ensemble Random Forest, Logistic Regression and SVMs
+#trainEnsembledMethod <- function(data.tr){
+#  rfGrid <- expand.grid(mtry=c(5,7,9,11))
+#  svmGrid <- expand.grid(gamma=c(2,3,4), cost=c(0.01,0.1,0.2,0.3,0.4,0.5))
+#  ensembledModel <- caretList(
+#    churn~., data = data.tr, trControl = ctrl, methodList=c("rf", "svmLinear2", "glm")
+#  )
+#}

@@ -2,8 +2,8 @@ dir <- Sys.getenv('BADS_Path')
 
 
 ### Not on windows #######
-#library(doMC)           #
-#registerDoMC(cores = 4) #
+library(doMC)           #
+registerDoMC(cores = 4) #
 ##########################
 
 source(paste0(dir, "/Code/Utils.R"))
@@ -34,7 +34,7 @@ trainingset <- loadImputedTrainingset(paste0(dir, "/Data/ImputedData.csv"))
 numericVariables = getNumericVariables(trainingset)
 categoricVariables <- trainingset[setdiff(colnames(trainingset), colnames(numericVariables))]
 print("Finished Missing Value Handling")
-trainingset <- trainingset[1:500,]
+trainingset <- trainingset[1:1000,]
 
 #Outlier Handling
 source(paste0(dir, "/Code/Outliers.R"))
@@ -84,6 +84,39 @@ errorRates.knn <- c()
 errorRates.svm <- c()
 errorRates.J48 <- c()
 #train multiple times 
+
+###Temp
+#idx.train <- createDataPartition(y = trainingset$churn, p=0.7, list=FALSE)
+#data.tr <- trainingset[idx.train,]
+#data.ts <- trainingset[-idx.train,]
+
+#rf <- trainRandomForest(data.tr)
+idx.train <- createDataPartition(y = trainingset$churn, p=0.7, list=FALSE)
+data.tr <- trainingset[idx.train,]
+data.ts <- trainingset[-idx.train,]
+library(caretEnsemble)
+#save(rf, file = "rfModel.RData")
+ctrl <- trainControl(method="cv", number = 5, classProbs = TRUE)
+model_list_big <- caretList(
+  churn~., data=data.tr,
+  trControl=ctrl,
+  metric='ROC',
+  #methodList = c("rf", "svmLinear2", "glm")
+  tuneList=list(
+    rf=caretModelSpec(method='rf', tuneGrid=data.frame(.mtry=c(9,27, 41, 75))),
+    svm=caretModelSpec(method='svmLinear2', tuneGrid=data.frame(.gamma=1, .cost=c(0.01,0.05,0.1))),
+    glm=caretModelSpec(method='glm')
+  )
+)
+
+greedy_ensemble <- caretEnsemble(model_list_big, iter=1000L)
+yhat_ens <- predict(greedy_ensemble, newdata = data.ts)
+ModelPerformance(data.ts$churn, yhat_ens)
+
+#glm_ensemble <- caretStack(model_list_big, method='glm', trControl=trainControl(method='cv'))
+sendmail("frederik@pahde.com", subject="R Notification", message=paste("Finished Ensembling\n
+                                                                        Error Rate: ", err.ens))
+unused <- function(){
 for (i in c(1:1)) {
   print(paste("start Iteration ", i))
 
@@ -96,20 +129,20 @@ for (i in c(1:1)) {
   data.ts_wo <- trainingset_withoutOutlier[-idx.train,]
   
   #Train Models
-  nnet <- trainNnet(data.tr_wo)
-  print("Finished NNET Training")
-  naiveBayes <- trainNaiveBayes(data.tr)
-  print("Finished Naive Bayes Training")
+  #nnet <- trainNnet(data.tr_wo)
+  #print("Finished NNET Training")
+  #naiveBayes <- trainNaiveBayes(data.tr)
+  #print("Finished Naive Bayes Training")
   lr <- trainLogisticRegression(data.tr_wo)
   print("Finished Logistic Regression")
   rf <- trainRandomForest(data.tr)
   print("Finished Random Forest")
-  knn <- trainKNN(data.tr)
-  print("Finished KNN Training")
+  #knn <- trainKNN(data.tr)
+  #print("Finished KNN Training")
   svm <- trainSVM(data.tr_wo)
   print("Finished SVM Training")
-  J48 <- trainJ48(data.tr)
-  print("Finished J48 Training")
+  #J48 <- trainJ48(data.tr)
+  #print("Finished J48 Training")
   #adaBag <- trainAdaBag(data.tr)
   #print("Finished AdaBag Training")
   
@@ -118,59 +151,61 @@ for (i in c(1:1)) {
   #yhat.nb <- predict(nb, newdata = data.ts, type="class")
   #errorRate <- 1- sum(as.numeric(yhat.nb == data.ts$churn))/length(data.ts$churn)
   #Predict Test Set
-  yhat.nnet <- predict(nnet, newdata = data.ts_wo, type="raw")
-  yhat.naiveBayes <- predict(naiveBayes, newdata = data.ts, type="raw")
+  #yhat.nnet <- predict(nnet, newdata = data.ts_wo, type="raw")
+  #yhat.naiveBayes <- predict(naiveBayes, newdata = data.ts, type="raw")
   yhat.lr <- predict(lr, newdata = data.ts_wo, type="prob")[,2]
   yhat.rf <- predict(rf, newdata = data.ts, type = "prob")[,2]
-  yhat.knn <- predict(knn, newdata = data.ts, type = "raw")
+  #yhat.knn <- predict(knn, newdata = data.ts, type = "raw")
   yhat.svm <- predict(svm, newdata = data.ts_wo, type = "prob")[,2]
-  yhat.J48 <- predict(J48, newdata = data.ts, type = "raw")
+  #yhat.J48 <- predict(J48, newdata = data.ts, type = "raw")
   
   #Assess Models
-  err.nnet <- ModelPerformanceByClass(data.ts_wo$churn, yhat.nnet)
-  err.naiveBayes <-  ModelPerformanceByClass(data.ts$churn, yhat.naiveBayes)
+  #err.nnet <- ModelPerformanceByClass(data.ts_wo$churn, yhat.nnet)
+  #err.naiveBayes <-  ModelPerformanceByClass(data.ts$churn, yhat.naiveBayes)
   err.lr <- ModelPerformance(data.ts_wo$churn, yhat.lr)
   err.rf <- ModelPerformance(data.ts$churn, yhat.rf)
-  err.knn <- ModelPerformanceByClass(data.ts$churn, yhat.knn)
+  #err.knn <- ModelPerformanceByClass(data.ts$churn, yhat.knn)
   err.svm <- ModelPerformance(data.ts$churn, yhat.svm)
-  err.J48 <- ModelPerformanceByClass(data.ts$churn, yhat.J48)
+  #err.J48 <- ModelPerformanceByClass(data.ts$churn, yhat.J48)
   
-  print(paste0("ErrorRate (nnet): ", err.nnet))
-  print(paste0("ErrorRate (naiveBayes): ", err.naiveBayes))
+  #print(paste0("ErrorRate (nnet): ", err.nnet))
+  #print(paste0("ErrorRate (naiveBayes): ", err.naiveBayes))
   print(paste0("ErrorRate (Logistic Regression): ", err.lr))
   print(paste0("ErrorRate (Random Forest): ", err.rf))
-  print(paste0("ErrorRate (KNN): ", err.knn))
+  #print(paste0("ErrorRate (KNN): ", err.knn))
   print(paste0("ErrorRate (svm): ", err.svm))
-  print(paste0("ErrorRate (J48): ", err.J48))
+  #print(paste0("ErrorRate (J48): ", err.J48))
   
-  errorRates.nnet <- c(errorRates.nnet, err.nnet)
-  errorRates.naiveBayes <- c(errorRates.naiveBayes, err.naiveBayes)
+  #errorRates.nnet <- c(errorRates.nnet, err.nnet)
+  #errorRates.naiveBayes <- c(errorRates.naiveBayes, err.naiveBayes)
   errorRates.lr <- c(errorRates.lr, err.lr)
   errorRates.rf <- c(errorRates.rf, err.rf)
-  errorRates.knn <- c(errorRates.knn, err.knn)
+  #errorRates.knn <- c(errorRates.knn, err.knn)
   errorRates.svm <- c(errorRates.svm, err.svm)
-  errorRates.J48 <- c(errorRates.J48, err.J48)
+  #errorRates.J48 <- c(errorRates.J48, err.J48)
   
   ##Send me an information:
-  sendmail("frederik@pahde.com", subject="R Notification", message=paste("Finished Iteration ", i, ": 
-                                                                        Logistic Regression: ", err.lr, "\n
-                                                                        Random Forest: ", err.rf, "\n
-                                                                        Support Vector Machine: ", err.svm), password="rmail")
+  #sendmail("frederik@pahde.com", subject="R Notification", message=paste("Finished Iteration ", i, ": 
+  #                                                                      Logistic Regression: ", err.lr, "\n
+  #                                                                      Random Forest: ", err.rf, "\n
+  #                                                                      Support Vector Machine: ", err.svm), password="rmail")
 }
-print("Error Rates NNET: ")
-print(errorRates.nnet)
-print("Error Rates Naive Bayes: ")
-print(errorRates.naiveBayes)
+#print("Error Rates NNET: ")
+sendmail("frederik@pahde.com", subject="R Notification", message=paste("Finished Ensembling\n
+                                                                        Error Rate: ", err.ens))
+#print(errorRates.nnet)
+#print("Error Rates Naive Bayes: ")
+#print(errorRates.naiveBayes)
 print("Error Rates LR: ")
 print(errorRates.lr)
 print("Error Rates RF: ")
 print(errorRates.rf)
-print("Error Rates KNN: ")
-print(errorRates.knn)
+#print("Error Rates KNN: ")
+#print(errorRates.knn)
 print("Error Rates SVM: ")
 print(errorRates.svm)
-print("Error Rates J48: ")
-print(errorRates.J48)
+#print("Error Rates J48: ")
+#print(errorRates.J48)
 ##############################END TRAINING#################################################################
 ##10 Fold CV for Logistic Regression
 #n <- 10
@@ -233,4 +268,4 @@ print(errorRates.J48)
 
 #summary(trainingset[,50:78])
 
-
+}
