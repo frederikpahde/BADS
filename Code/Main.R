@@ -84,6 +84,7 @@ errorRates.knn <- c()
 errorRates.svm <- c()
 errorRates.J48 <- c()
 errorRates.ensemble <- c()
+errorRates.ensemble_wo <- c()
 #train multiple times 
 
 ###Temp
