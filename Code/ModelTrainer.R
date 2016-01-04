@@ -73,10 +73,19 @@ trainLogisticRegression <- function(data.tr){
 }
 
 #Ensemble Random Forest, Logistic Regression and SVMs
-#trainEnsembledMethod <- function(data.tr){
-#  rfGrid <- expand.grid(mtry=c(5,7,9,11))
-#  svmGrid <- expand.grid(gamma=c(2,3,4), cost=c(0.01,0.1,0.2,0.3,0.4,0.5))
-#  ensembledModel <- caretList(
-#    churn~., data = data.tr, trControl = ctrl, methodList=c("rf", "svmLinear2", "glm")
-#  )
-#}
+library(caretEnsemble)
+trainEnsembledMethod <- function(data.tr){
+  model_list_big <- caretList(
+    churn~., data=data.tr,
+    trControl=ctrl,
+    metric='ROC',
+    tuneList=list(
+      rf=caretModelSpec(method='rf', tuneGrid=data.frame(.mtry=c(9,27, 41, 75))),
+      svm=caretModelSpec(method='svmLinear2', tuneGrid=data.frame(.gamma=1, .cost=c(0.01,0.05,0.1))),
+      glm=caretModelSpec(method='glm')
+    )
+  )
+  
+  greedy_ensemble <- caretEnsemble(model_list_big, iter=1000L)
+  return(greedy_ensemble)
+}
