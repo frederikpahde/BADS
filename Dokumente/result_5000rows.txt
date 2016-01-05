@@ -1,0 +1,152 @@
+Lade nötiges Paket: data.table
+Lade nötiges Paket: mvoutlier
+Lade nötiges Paket: sgeostat
+sROC 0.1-2 loaded
+Lade nötiges Paket: HighDimOut
+Lade nötiges Paket: klaR
+Lade nötiges Paket: MASS
+Lade nötiges Paket: adabag
+Lade nötiges Paket: rpart
+Lade nötiges Paket: mlbench
+Lade nötiges Paket: caret
+Lade nötiges Paket: lattice
+Lade nötiges Paket: ggplot2
+Lade nötiges Paket: RWeka
+Lade nötiges Paket: cvTools
+Lade nötiges Paket: robustbase
+Lade nötiges Paket: CORElearn
+Lade nötiges Paket: corrplot
+Lade nötiges Paket: DMwR
+Lade nötiges Paket: methods
+Lade nötiges Paket: grid
+Lade nötiges Paket: Hmisc
+Lade nötiges Paket: survival
+
+Attache Paket: ‘survival’
+
+Das folgende Objekt ist maskiert ‘package:robustbase’:
+
+    heart
+
+Das folgende Objekt ist maskiert ‘package:caret’:
+
+    cluster
+
+Lade nötiges Paket: Formula
+Lade nötiges Paket: randomForest
+randomForest 4.6-12
+Type rfNews() to see new features/changes/bug fixes.
+Lade nötiges Paket: gmodels
+Lade nötiges Paket: outliers
+Lade nötiges Paket: glmnet
+Lade nötiges Paket: Matrix
+Lade nötiges Paket: foreach
+Loaded glmnet 2.0-2
+
+Warnmeldungen:
+1: vorhergehender Import durch ‘grid::arrow’ während des Ladens von ‘GGally’ ersetzt 
+2: vorhergehender Import durch ‘grid::unit’ während des Ladens von ‘GGally’ ersetzt 
+[1] "Loaded Dataset"
+[1] "Finished Missing Value Handling"
+[1] "Finished Outlier Handling"
+[1] "Finished Scaling"
+[1] "Finished Feature Selection"
+[1] "start Iteration  1"
+Loading required package: nnet
+[1] "Finished NNET Training"
+[1] "Finished Naive Bayes Training"
+[1] "Finished Logistic Regression"
+[1] "Finished Random Forest"
+[1] "Finished KNN Training"
+Loading required package: e1071
+
+Attaching package: ‘e1071’
+
+Das folgende Objekt ist maskiert ‘package:Hmisc’:
+
+    impute
+
+[1] "Finished SVM Training"
+[1] "Finished J48 Training"
+[1] "ErrorRate (nnet): 0.488992661774516"
+[1] "ErrorRate (naiveBayes): 0.451634422948632"
+[1] "ErrorRate (Logistic Regression): 0.394929953302201"
+[1] "ErrorRate (Random Forest): 0.404269513008672"
+[1] "ErrorRate (KNN): 0.436290860573716"
+[1] "ErrorRate (svm): 0.38559039359573"
+[1] "ErrorRate (J48): 0.439626417611741"
+[1] "start Iteration  2"
+[1] "Finished NNET Training"
+[1] "Finished Naive Bayes Training"
+[1] "Finished Logistic Regression"
+[1] "Finished Random Forest"
+[1] "Finished KNN Training"
+[1] "Finished SVM Training"
+[1] "Finished J48 Training"
+[1] "ErrorRate (nnet): 0.400266844563042"
+[1] "ErrorRate (naiveBayes): 0.470980653769179"
+[1] "ErrorRate (Logistic Regression): 0.403602401601067"
+[1] "ErrorRate (Random Forest): 0.402935290193462"
+[1] "ErrorRate (KNN): 0.449633088725817"
+[1] "ErrorRate (svm): 0.397598398932622"
+[1] "ErrorRate (J48): 0.454302868579053"
+[1] "start Iteration  3"
+[1] "Finished NNET Training"
+[1] "Finished Naive Bayes Training"
+[1] "Finished Logistic Regression"
+[1] "Finished Random Forest"
+[1] "Finished KNN Training"
+[1] "Finished SVM Training"
+[1] "Finished J48 Training"
+[1] "ErrorRate (nnet): 0.488992661774516"
+[1] "ErrorRate (naiveBayes): 0.444296197464977"
+[1] "ErrorRate (Logistic Regression): 0.392928619079386"
+[1] "ErrorRate (Random Forest): 0.410273515677118"
+[1] "ErrorRate (KNN): 0.444963308872582"
+[1] "ErrorRate (svm): 0.386924616410941"
+[1] "ErrorRate (J48): 0.440960640426951"
+[1] "start Iteration  4"
+[1] "Finished NNET Training"
+[1] "Finished Naive Bayes Training"
+[1] "Finished Logistic Regression"
+[1] "Finished Random Forest"
+[1] "Finished KNN Training"
+[1] "Finished SVM Training"
+[1] "Finished J48 Training"
+[1] "ErrorRate (nnet): 0.417611741160774"
+[1] "ErrorRate (naiveBayes): 0.463642428285524"
+[1] "ErrorRate (Logistic Regression): 0.404269513008672"
+[1] "ErrorRate (Random Forest): 0.37758505670447"
+[1] "ErrorRate (KNN): 0.446964643095397"
+[1] "ErrorRate (svm): 0.395597064709806"
+[1] "ErrorRate (J48): 0.441627751834556"
+[1] "start Iteration  5"
+[1] "Finished NNET Training"
+[1] "Finished Naive Bayes Training"
+[1] "Finished Logistic Regression"
+[1] "Finished Random Forest"
+[1] "Finished KNN Training"
+[1] "Finished SVM Training"
+[1] "Finished J48 Training"
+[1] "ErrorRate (nnet): 0.488992661774516"
+[1] "ErrorRate (naiveBayes): 0.455637091394263"
+[1] "ErrorRate (Logistic Regression): 0.389593062041361"
+[1] "ErrorRate (Random Forest): 0.389593062041361"
+[1] "ErrorRate (KNN): 0.457638425617078"
+[1] "ErrorRate (svm): 0.392261507671781"
+[1] "ErrorRate (J48): 0.444963308872582"
+Es gab 50 oder mehr Warnungen (Anzeige der ersten 50 mit warnings())
+[1] "Error Rates NNET: "
+[1] 0.4889927 0.4002668 0.4889927 0.4176117 0.4889927
+[1] "Error Rates Naive Bayes: "
+[1] 0.4516344 0.4709807 0.4442962 0.4636424 0.4556371
+[1] "Error Rates LR: "
+[1] 0.3949300 0.4036024 0.3929286 0.4042695 0.3895931
+[1] "Error Rates RF: "
+[1] 0.4042695 0.4029353 0.4102735 0.3775851 0.3895931
+[1] "Error Rates KNN: "
+[1] 0.4362909 0.4496331 0.4449633 0.4469646 0.4576384
+[1] "Error Rates SVM: "
+[1] 0.3855904 0.3975984 0.3869246 0.3955971 0.3922615
+[1] "Error Rates J48: "
+[1] 0.4396264 0.4543029 0.4409606 0.4416278 0.4449633
