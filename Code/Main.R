@@ -45,14 +45,14 @@ trainingset_withoutOutlier<- z.scale.data(m=trainingset_withoutOutlier,continous
 print("Finished Scaling")
 
 #Corelation
-<<<<<<< HEAD
+
 #identify highly corelated coplete veriables
 source(paste0(dir, "/Code/Correlation.R"))
 data<-trainingset_withoutOutlier
 trainingset_withoutCorrelated<-handle.highly.correlated.for.Matrix(data, .75, 
         which(colnames(data)=="Customer_ID"|colnames(data)=="churn"))
 
-=======
+
 #identify highly corelated coplete veriables (only numeric)
 #correlationMatrix <- cor(trainingset)
 #correlationMatrix2 <- cor(trainingset_withoutOutlier)
@@ -64,7 +64,7 @@ trainingset_withoutCorrelated<-handle.highly.correlated.for.Matrix(data, .75,
 #trainingset<-trainingset[,-highlyCorrelated]
 
 #trainingset_withoutOutlier<-trainingset_withoutOutlier[,-highlyCorrelated2]
->>>>>>> 7ef7e07e425cd8e1ebd4017012efd92031e81143
+
 
 #Feature selection
 # source(paste0(dir, "/Code/FeatureSelection.R"))
@@ -72,9 +72,9 @@ trainingset_withoutCorrelated<-handle.highly.correlated.for.Matrix(data, .75,
 selectedFeatures <- getSelectedFeatureSet(dir)
 selectedFeatures <- c(as.vector(selectedFeatures[,1]), "churn")
 
-<<<<<<< HEAD
+
 #Split to test/trainigsset
-=======
+
 trainingset <- trainingset[,selectedFeatures]
 trainingset_withoutOutlier <- trainingset_withoutOutlier[,selectedFeatures]
 print("Finished Feature Selection")
@@ -99,7 +99,7 @@ errorRates.ensemble_wo <- c()
 #data.ts <- trainingset[-idx.train,]
 
 #rf <- trainRandomForest(data.tr)
->>>>>>> 7ef7e07e425cd8e1ebd4017012efd92031e81143
+
 idx.train <- createDataPartition(y = trainingset$churn, p=0.7, list=FALSE)
 data.tr <- trainingset[idx.train,]
 data.ts <- trainingset[-idx.train,]
