@@ -1,4 +1,6 @@
 dir <- Sys.getenv('BADS_Path')   
+setwd("~/Documents/HU Berlin/WI 1516/BADS/Aufgabe/BADS")
+dir<-getwd()
 
 source(paste0(dir, "/Code/Utils.R"))
 source(paste0(dir, "/Code/PlotHelper.R"))
@@ -76,9 +78,23 @@ selectedFeatures <- c(as.vector(selectedFeatures[,1]), "churn")
 #Split to test/trainigsset
 
 trainingset <- trainingset[,selectedFeatures]
-trainingset_withoutOutlier <- trainingset_withoutOutlier[,selectedFeatures]
+#trainingset_withoutOutlier <- trainingset_withoutOutlier[,selectedFeatures]
+columns <-colnames(trainingset_withoutCorrelated)
+
+#nicht alle selected features sind auch in trainingset_withoutCorrelated daher:   
+selectedFeatures_for_withoutCorrelated<-selectedFeatures[selectedFeatures %in% colnames(trainingset_withoutCorrelated)]
+trainingset_withoutCorrelated_selecterFeatures <- trainingset_withoutCorrelated[,selectedFeatures_for_withoutCorrelated]
+
+###########da das Modetraining mit trainingset_withoutOutlier
+trainingset_withoutOutlier<-trainingset_withoutCorrelated_selecterFeatures
+###########
 print("Finished Feature Selection")
 
+
+#PCA
+#eingabe: frame mit numerischen und nicht nummerischen Variablen
+#returns: frame mit nummerischen und nicht nummerischen Variablen, nummerische sind mit PCA behandelt
+#trainingset_withoutOutlier<-executePCA(trainingset_withoutOutlier)
 
 #######################START TRAINING#########################################################
 source(paste0(dir, "/Code/ModelTrainer.R"))
