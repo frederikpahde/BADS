@@ -53,6 +53,9 @@ trainingset_withoutCorrelated<-handle.highly.correlated.for.Matrix(data, .75,
         which(colnames(data)=="Customer_ID"|colnames(data)=="churn"))
 
 
+#####when skeaping the correlation
+trainingset_withoutCorrelated<-trainingset_withoutOutlier
+
 #identify highly corelated coplete veriables (only numeric)
 #correlationMatrix <- cor(trainingset)
 #correlationMatrix2 <- cor(trainingset_withoutOutlier)
@@ -69,8 +72,12 @@ trainingset_withoutCorrelated<-handle.highly.correlated.for.Matrix(data, .75,
 #Feature selection
 # source(paste0(dir, "/Code/FeatureSelection.R"))
 # new dataset only containing selected features
-selectedFeatures <- getSelectedFeatureSet(dir)
-selectedFeatures <- c(as.vector(selectedFeatures[,1]), "churn")
+# selectedFeatures <- getSelectedFeatureSet(dir)
+# selectedFeatures <- c(as.vector(selectedFeatures[,1]), "churn")
+importance <- varImp(rf, type= 1, scale=FALSE)
+importance_ranking <- importance$importance
+importance_ranking <- as.vector(importance_ranking)
+
 
 
 #Split to test/trainigsset
@@ -90,9 +97,10 @@ print("Finished Feature Selection")
 
 
 #PCA
+source(paste0(dir, "/Code/PCA.R"))
 #eingabe: frame mit numerischen und nicht nummerischen Variablen
 #returns: frame mit nummerischen und nicht nummerischen Variablen, nummerische sind mit PCA behandelt
-#trainingset_withoutOutlier<-executePCA(trainingset_withoutOutlier)
+trainingset_withoutOutlier_afterPCA<-executePCA(trainingset_withoutOutlier)
 
 #######################START TRAINING#########################################################
 source(paste0(dir, "/Code/ModelTrainer.R"))
@@ -123,7 +131,7 @@ data.ts <- trainingset[-idx.train,]
 
 #glm_ensemble <- caretStack(model_list_big, method='glm', trControl=trainControl(method='cv'))
 
-for (i in c(1:1)) {
+for (i in c(1:5)) {
   print(paste("start Iteration ", i))
 
   #Split to test/trainigsset
@@ -152,9 +160,9 @@ for (i in c(1:1)) {
   #adaBag <- trainAdaBag(data.tr)
   #print("Finished AdaBag Training")
   greedy_ensemble <- trainEnsembledMethod(data.tr)
-  #print("Finished Ensembled Training")
-  #greedy_ensemble_wo <- trainEnsembledMethod(data.tr_wo)
-  #print("Finished Ensembled Training WO")
+  print("Finished Ensembled Training")
+  greedy_ensemble_wo <- trainEnsembledMethod(data.tr_wo)
+  print("Finished Ensembled Training")
   
   #library(e1071)
   #nb <- naiveBayes(churn~., data = data.tr)
@@ -169,7 +177,7 @@ for (i in c(1:1)) {
   #yhat.svm <- predict(svm, newdata = data.ts_wo, type = "prob")[,2]
   #yhat.J48 <- predict(J48, newdata = data.ts, type = "raw")
   yhat_ens <- predict(greedy_ensemble, newdata = data.ts)
-  #yhat_ens_wo <- predict(greedy_ensemble_wo, newdata = data.ts_wo)
+  yhat_ens_wo <- predict(greedy_ensemble_wo, newdata = data.ts_wo)
   
   #Assess Models
   #err.nnet <- ModelPerformanceByClass(data.ts_wo$churn, yhat.nnet)
@@ -179,8 +187,7 @@ for (i in c(1:1)) {
   #err.knn <- ModelPerformanceByClass(data.ts$churn, yhat.knn)
   #err.svm <- ModelPerformance(data.ts$churn, yhat.svm)
   #err.J48 <- ModelPerformanceByClass(data.ts$churn, yhat.J48)
-  #err.ensemble <- ModelPerformance(data.ts$churn, yhat_ens)
-  #err.ensemble_wo <- ModelPerformance(data.ts$churn, yhat_ens_wo)
+  err.ensemble_wo <- ModelPerformance(data.ts$churn, yhat_ens_wo)
   
   #print(paste0("ErrorRate (nnet): ", err.nnet))
   #print(paste0("ErrorRate (naiveBayes): ", err.naiveBayes))
@@ -189,8 +196,8 @@ for (i in c(1:1)) {
   #print(paste0("ErrorRate (KNN): ", err.knn))
   #print(paste0("ErrorRate (svm): ", err.svm))
   #print(paste0("ErrorRate (J48): ", err.J48))
-  #print(paste0("ErrorRate (Ensemble): ", err.ensemble))
-  #print(paste0("ErrorRate (Ensemble WO): ", err.ensemble_wo))
+  print(paste0("ErrorRate (Ensemble): ", err.ensemble))
+  print(paste0("ErrorRate (Ensemble WO): ", err.ensemble_wo))
   
   #errorRates.nnet <- c(errorRates.nnet, err.nnet)
   #errorRates.naiveBayes <- c(errorRates.naiveBayes, err.naiveBayes)
@@ -199,14 +206,14 @@ for (i in c(1:1)) {
   #errorRates.knn <- c(errorRates.knn, err.knn)
   #errorRates.svm <- c(errorRates.svm, err.svm)
   #errorRates.J48 <- c(errorRates.J48, err.J48)
-  #errorRates.ensemble <- c(errorRates.ensemble, err.ensemble)
-  #errorRates.ensemble_wo <- c(errorRates.ensemble_wo, err.ensemble_wo)
+  errorRates.ensemble <- c(errorRates.ensemble, err.ensemble)
+  errorRates.ensemble_wo <- c(errorRates.ensemble_wo, err.ensemble_wo)
   
   ##Send me an information:
   
-  #sendmail("frederik@pahde.com", subject="R Notification", message=paste("Finished Ensembling\n
-  #                                                                       Error Rate: ", err.ensemble, 
-  #                                                                       "\nError Rate (wo): ", err.ensemble_wo))
+  sendmail("frederik@pahde.com", subject="R Notification", message=paste("Finished Ensembling\n
+                                                                         Error Rate: ", err.ensemble, 
+                                                                         "\nError Rate (wo): ", err.ensemble_wo))
   
   #sendmail("frederik@pahde.com", subject="R Notification", message=paste("Finished Iteration ", i, ": 
   #                                                                      Logistic Regression: ", err.lr, "\n

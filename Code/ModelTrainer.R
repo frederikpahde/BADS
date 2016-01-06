@@ -41,7 +41,7 @@ trainNnet <- function(data.tr){
 
 trainRandomForest <- function(data.tr){
   rfGrid <- expand.grid(mtry=seq(5,70,5))
-  rf.tune <- train(churn~., data = data.tr, method="parRF", trControl = ctrl, tuneGrid=rfGrid)
+  rf.tune <- train(churn~., data = data.tr, method="parRF", trControl = ctrl, tuneGrid=rfGrid, importance=TRUE)
   return(rf.tune)
 }
 
