@@ -1,6 +1,7 @@
 ###PSA###
 executePCA<-function(data){
 data_numeric<-getNumericVariables(data)
+data_numeric<-data_numeric[,-which(colnames(data_numeric)=="Customer_ID")]
 new_data_numeric<-pca(data_numeric)
 data_rest<-data[,setdiff(colnames(data),colnames(data_numeric))]
 #plot(new_data_numeric)
