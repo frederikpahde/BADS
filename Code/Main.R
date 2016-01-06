@@ -99,8 +99,6 @@ source(paste0(dir, "/Code/PCA.R"))
 #eingabe: frame mit numerischen und nicht nummerischen Variablen
 #returns: frame mit nummerischen und nicht nummerischen Variablen, nummerische sind mit PCA behandelt
 trainingset_withoutOutlier_afterPCA<-executePCA(trainingset_withoutOutlier)
-#################eizelne Schrite für Doku
-
 
 #######################START TRAINING#########################################################
 source(paste0(dir, "/Code/ModelTrainer.R"))
