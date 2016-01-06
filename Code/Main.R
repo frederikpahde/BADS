@@ -1,10 +1,6 @@
 dir <- Sys.getenv('BADS_Path')   
-
-
-### Not on windows #######
-#library(doMC)           #
-#registerDoMC(cores = 4) #
-##########################
+setwd("~/Documents/HU Berlin/WI 1516/BADS/Aufgabe/BADS")
+dir<-getwd()
 
 source(paste0(dir, "/Code/Utils.R"))
 source(paste0(dir, "/Code/PlotHelper.R"))
@@ -51,6 +47,14 @@ trainingset_withoutOutlier<- z.scale.data(m=trainingset_withoutOutlier,continous
 print("Finished Scaling")
 
 #Corelation
+
+#identify highly corelated coplete veriables
+source(paste0(dir, "/Code/Correlation.R"))
+data<-trainingset_withoutOutlier
+trainingset_withoutCorrelated<-handle.highly.correlated.for.Matrix(data, .75, 
+        which(colnames(data)=="Customer_ID"|colnames(data)=="churn"))
+
+
 #identify highly corelated coplete veriables (only numeric)
 #correlationMatrix <- cor(trainingset)
 #correlationMatrix2 <- cor(trainingset_withoutOutlier)
@@ -63,16 +67,34 @@ print("Finished Scaling")
 
 #trainingset_withoutOutlier<-trainingset_withoutOutlier[,-highlyCorrelated2]
 
+
 #Feature selection
 # source(paste0(dir, "/Code/FeatureSelection.R"))
 # new dataset only containing selected features
 selectedFeatures <- getSelectedFeatureSet(dir)
 selectedFeatures <- c(as.vector(selectedFeatures[,1]), "churn")
 
+
+#Split to test/trainigsset
+
 trainingset <- trainingset[,selectedFeatures]
-trainingset_withoutOutlier <- trainingset_withoutOutlier[,selectedFeatures]
+#trainingset_withoutOutlier <- trainingset_withoutOutlier[,selectedFeatures]
+columns <-colnames(trainingset_withoutCorrelated)
+
+#nicht alle selected features sind auch in trainingset_withoutCorrelated daher:   
+selectedFeatures_for_withoutCorrelated<-selectedFeatures[selectedFeatures %in% colnames(trainingset_withoutCorrelated)]
+trainingset_withoutCorrelated_selecterFeatures <- trainingset_withoutCorrelated[,selectedFeatures_for_withoutCorrelated]
+
+###########da das Modetraining mit trainingset_withoutOutlier
+trainingset_withoutOutlier<-trainingset_withoutCorrelated_selecterFeatures
+###########
 print("Finished Feature Selection")
 
+
+#PCA
+#eingabe: frame mit numerischen und nicht nummerischen Variablen
+#returns: frame mit nummerischen und nicht nummerischen Variablen, nummerische sind mit PCA behandelt
+#trainingset_withoutOutlier<-executePCA(trainingset_withoutOutlier)
 
 #######################START TRAINING#########################################################
 source(paste0(dir, "/Code/ModelTrainer.R"))
@@ -93,6 +115,7 @@ errorRates.ensemble_wo <- c()
 #data.ts <- trainingset[-idx.train,]
 
 #rf <- trainRandomForest(data.tr)
+
 idx.train <- createDataPartition(y = trainingset$churn, p=0.7, list=FALSE)
 data.tr <- trainingset[idx.train,]
 data.ts <- trainingset[-idx.train,]
