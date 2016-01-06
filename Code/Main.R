@@ -55,6 +55,9 @@ trainingset_withoutCorrelated<-handle.highly.correlated.for.Matrix(data, .75,
         which(colnames(data)=="Customer_ID"|colnames(data)=="churn"))
 
 
+#####when skeaping the correlation
+trainingset_withoutCorrelated<-trainingset_withoutOutlier
+
 #identify highly corelated coplete veriables (only numeric)
 #correlationMatrix <- cor(trainingset)
 #correlationMatrix2 <- cor(trainingset_withoutOutlier)
@@ -92,9 +95,12 @@ print("Finished Feature Selection")
 
 
 #PCA
+source(paste0(dir, "/Code/PCA.R"))
 #eingabe: frame mit numerischen und nicht nummerischen Variablen
 #returns: frame mit nummerischen und nicht nummerischen Variablen, nummerische sind mit PCA behandelt
-#trainingset_withoutOutlier<-executePCA(trainingset_withoutOutlier)
+trainingset_withoutOutlier_afterPCA<-executePCA(trainingset_withoutOutlier)
+#################eizelne Schrite für Doku
+
 
 #######################START TRAINING#########################################################
 source(paste0(dir, "/Code/ModelTrainer.R"))
