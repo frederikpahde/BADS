@@ -1,8 +1,16 @@
-getAccuracy <- function(model, testSet){
+?getAccuracy <- function(model, testSet){
   pred <- predict(model, newdata=testSet, type="response")
   class <- round(pred)
   confustionTable <- CrossTable(testSet$churn, class, prop.c=FALSE)$t
   return((confustionTable[1,1]+confustionTable[1,2])/length(y))
+}
+
+getLiftMeasure<-function(y, yhat){
+  amount <- ceil(length(yhat)/10)
+  yhat_sorted <- sort(yhat, decreasing = TRUE, index.return=1)
+  inds <- yhat_sorted$ix[1:amount]
+  liftMeasure <- (sum(as.numeric(data.ts[inds,]$churn=="bad"))/amount)/0.49562
+  return(liftMeasure)
 }
 
 ModelPerformance <- function(y, yhat, cutoff=0.5){
@@ -23,7 +31,7 @@ ModelPerformanceByClass <- function(y, yhat){
   return(errorRate)
 }
 
-ctrl <- trainControl(method="cv", number = 10, classProbs = TRUE)
+ctrl <- trainControl(method="cv", number = 20, classProbs = TRUE)
 
 trainNnet <- function(data.tr){
   nnGrid <- expand.grid(size=c(2,5,9), decay=c(.1,1,10))
@@ -32,8 +40,8 @@ trainNnet <- function(data.tr){
 }
 
 trainRandomForest <- function(data.tr){
-  rfGrid <- expand.grid(mtry=c(7,9,11,15))
-  rf.tune <- train(churn~., data = data.tr, method="rf", trControl = ctrl, tuneGrid=rfGrid)
+  rfGrid <- expand.grid(mtry=seq(5,70,5))
+  rf.tune <- train(churn~., data = data.tr, method="parRF", trControl = ctrl, tuneGrid=rfGrid)
   return(rf.tune)
 }
 
@@ -50,7 +58,7 @@ trainKNN <- function(data.tr){
 }
 
 trainSVM <- function(data.tr){
-  svmGrid <- expand.grid(gamma=c(2), cost=c(0.01,0.1,0.2,0.3))
+  svmGrid <- expand.grid(gamma=c(2), cost=c(0.01, 0.02, 0.025, 0.03, 0.04, 0.05, 0.1,0.2,0.3))
   svm.tune <- train(churn~., data = data.tr, method="svmLinear2", trControl = ctrl, tuneGrid=svmGrid)
   return(svm.tune)
 }
