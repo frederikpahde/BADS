@@ -1,6 +1,4 @@
 dir <- Sys.getenv('BADS_Path')   
-setwd("~/Documents/HU Berlin/WI 1516/BADS/Aufgabe/BADS")
-dir<-getwd()
 
 source(paste0(dir, "/Code/Utils.R"))
 source(paste0(dir, "/Code/PlotHelper.R"))
@@ -30,7 +28,7 @@ trainingset <- loadImputedTrainingset(paste0(dir, "/Data/ImputedData.csv"))
 numericVariables = getNumericVariables(trainingset)
 categoricVariables <- trainingset[setdiff(colnames(trainingset), colnames(numericVariables))]
 print("Finished Missing Value Handling")
-trainingset <- trainingset[1:500,]
+trainingset <- trainingset[1:5000,]
 
 #Outlier Handling
 source(paste0(dir, "/Code/Outliers.R"))
@@ -214,6 +212,8 @@ for (i in c(1:1)) {
   #                                                                      Logistic Regression: ", err.lr, "\n
   #                                                                      Random Forest: ", err.rf, "\n
   #                                                                      Support Vector Machine: ", err.svm), password="rmail")
+
+  
 }
 #print("Error Rates NNET: ")
 
