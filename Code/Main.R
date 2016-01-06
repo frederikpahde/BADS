@@ -74,8 +74,12 @@ trainingset_withoutCorrelated<-trainingset_withoutOutlier
 #Feature selection
 # source(paste0(dir, "/Code/FeatureSelection.R"))
 # new dataset only containing selected features
-selectedFeatures <- getSelectedFeatureSet(dir)
-selectedFeatures <- c(as.vector(selectedFeatures[,1]), "churn")
+# selectedFeatures <- getSelectedFeatureSet(dir)
+# selectedFeatures <- c(as.vector(selectedFeatures[,1]), "churn")
+importance <- varImp(rf, type= 1, scale=FALSE)
+importance_ranking <- importance$importance
+importance_ranking <- as.vector(importance_ranking)
+
 
 
 #Split to test/trainigsset
