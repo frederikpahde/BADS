@@ -1,6 +1,6 @@
 dir <- Sys.getenv('BADS_Path')   
 setwd("~/Documents/HU Berlin/WI 1516/BADS/Aufgabe/BADS")
-dir<-getwd()
+#dir<-getwd()
 
 source(paste0(dir, "/Code/Utils.R"))
 source(paste0(dir, "/Code/PlotHelper.R"))
@@ -74,8 +74,9 @@ trainingset_withoutCorrelated<-trainingset_withoutOutlier
 #Feature selection
 # source(paste0(dir, "/Code/FeatureSelection.R"))
 # new dataset only containing selected features
-# selectedFeatures <- getSelectedFeatureSet(dir)
-# selectedFeatures <- c(as.vector(selectedFeatures[,1]), "churn")
+selectedFeatures <- getSelectedFeatureSet(dir)
+selectedFeatures <- c(as.vector(selectedFeatures[,1]), "churn")
+# for second iteration (after training random forest)
 importance <- varImp(rf, type= 1, scale=FALSE)
 importance_ranking <- importance$importance
 importance_ranking <- as.vector(importance_ranking)
