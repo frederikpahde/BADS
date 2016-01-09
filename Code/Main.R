@@ -1,5 +1,10 @@
 dir <- Sys.getenv('BADS_Path')   
 
+### Not on windows #######
+#library(doMC)           #
+#registerDoMC(cores = 4) #
+##########################
+
 source(paste0(dir, "/Code/Utils.R"))
 source(paste0(dir, "/Code/PlotHelper.R"))
 
@@ -28,7 +33,7 @@ trainingset <- loadImputedTrainingset(paste0(dir, "/Data/ImputedData.csv"))
 numericVariables = getNumericVariables(trainingset)
 categoricVariables <- trainingset[setdiff(colnames(trainingset), colnames(numericVariables))]
 print("Finished Missing Value Handling")
-trainingset <- trainingset[1:5000,]
+trainingset <- trainingset[1:500,]
 
 #Outlier Handling
 source(paste0(dir, "/Code/Outliers.R"))
@@ -47,14 +52,14 @@ print("Finished Scaling")
 #Corelation
 
 #identify highly corelated coplete veriables
-source(paste0(dir, "/Code/Correlation.R"))
-data<-trainingset_withoutOutlier
-trainingset_withoutCorrelated<-handle.highly.correlated.for.Matrix(data, .75, 
-        which(colnames(data)=="Customer_ID"|colnames(data)=="churn"))
+#source(paste0(dir, "/Code/Correlation.R"))
+#data<-trainingset_withoutOutlier
+#trainingset_withoutCorrelated<-handle.highly.correlated.for.Matrix(data, .75, 
+#        which(colnames(data)=="Customer_ID"|colnames(data)=="churn"))
 
 
 #####when skeaping the correlation
-trainingset_withoutCorrelated<-trainingset_withoutOutlier
+#trainingset_withoutCorrelated<-trainingset_withoutOutlier
 
 #identify highly corelated coplete veriables (only numeric)
 #correlationMatrix <- cor(trainingset)
@@ -72,14 +77,20 @@ trainingset_withoutCorrelated<-trainingset_withoutOutlier
 #Feature selection
 # source(paste0(dir, "/Code/FeatureSelection.R"))
 # new dataset only containing selected features
-# selectedFeatures <- getSelectedFeatureSet(dir)
-# selectedFeatures <- c(as.vector(selectedFeatures[,1]), "churn")
+#selectedFeatures <- getSelectedFeatureSet(dir)
+#selectedFeatures <- c(as.vector(selectedFeatures[,1]), "churn")
+source(paste0(dir, "/Code/ModelTrainer.R"))
+rf <- trainRandomForest(trainingset)
 importance <- varImp(rf, type= 1, scale=FALSE)
 importance_ranking <- importance$importance
 importance_ranking <- as.vector(importance_ranking)
+print("Importance:")
+print(importance)
+print("############################################")
+print("Importance Ranking:")
+print(importance_ranking)
 
-
-
+unused <- function(){
 #Split to test/trainigsset
 
 trainingset <- trainingset[,selectedFeatures]
@@ -302,3 +313,4 @@ print(errorRates.ensemble_wo)
 #summary(completeCases[,indicies])
 
 #summary(trainingset[,50:78])
+}
