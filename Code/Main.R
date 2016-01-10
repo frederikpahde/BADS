@@ -1,9 +1,14 @@
 dir <- Sys.getenv('BADS_Path')   
+<<<<<<< HEAD
+#setwd("~/Documents/HU Berlin/WI 1516/BADS/Aufgabe/BADS")
+#dir<-getwd()
+=======
 
 ### Not on windows #######
 library(doMC)           #
 registerDoMC(cores = 4) #
 ##########################
+>>>>>>> bc2109f6e88da85dbe90008fd93ec27b044646db
 
 source(paste0(dir, "/Code/Utils.R"))
 source(paste0(dir, "/Code/PlotHelper.R"))
