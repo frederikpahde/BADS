@@ -80,29 +80,36 @@ print("Finished Scaling")
 #selectedFeatures <- getSelectedFeatureSet(dir)
 #selectedFeatures <- c(as.vector(selectedFeatures[,1]), "churn")
 source(paste0(dir, "/Code/ModelTrainer.R"))
-rf <- trainRandomForest(trainingset)
-importance <- varImp(rf, type= 1, scale=FALSE)
-importance_ranking <- importance$importance
-importance_ranking <- as.vector(importance_ranking)
-print("Importance:")
-print(importance)
-print("############################################")
-print("Importance Ranking:")
-print(importance_ranking)
 
-unused <- function(){
+selectedFeatures <- getSelectedFeatureSet(dir)
+selectedFeatures <- c(as.vector(selectedFeatures[,1]), "churn")
+trainingset <- trainingset[,selectedFeatures]
+
+
+featureSelection <- function(){
+  rf <- trainRandomForest(trainingset)
+  importance <- varImp(rf, type= 1, scale=FALSE)
+  importance_ranking <- importance$importance
+  importance_ranking <- as.vector(importance_ranking)
+  print("Importance:")
+  print(importance)
+  print("############################################")
+  print("Importance Ranking:")
+  print(importance_ranking)
+}
+
 #Split to test/trainigsset
 
-trainingset <- trainingset[,selectedFeatures]
+#trainingset <- trainingset[,selectedFeatures]
 #trainingset_withoutOutlier <- trainingset_withoutOutlier[,selectedFeatures]
-columns <-colnames(trainingset_withoutCorrelated)
+#columns <-colnames(trainingset_withoutCorrelated)
 
 #nicht alle selected features sind auch in trainingset_withoutCorrelated daher:   
-selectedFeatures_for_withoutCorrelated<-selectedFeatures[selectedFeatures %in% colnames(trainingset_withoutCorrelated)]
-trainingset_withoutCorrelated_selecterFeatures <- trainingset_withoutCorrelated[,selectedFeatures_for_withoutCorrelated]
+#selectedFeatures_for_withoutCorrelated<-selectedFeatures[selectedFeatures %in% colnames(trainingset_withoutCorrelated)]
+#trainingset_withoutCorrelated_selecterFeatures <- trainingset_withoutCorrelated[,selectedFeatures_for_withoutCorrelated]
 
 ###########da das Modetraining mit trainingset_withoutOutlier
-trainingset_withoutOutlier<-trainingset_withoutCorrelated_selecterFeatures
+#trainingset_withoutOutlier<-trainingset_withoutCorrelated_selecterFeatures
 ###########
 print("Finished Feature Selection")
 
@@ -111,7 +118,7 @@ print("Finished Feature Selection")
 source(paste0(dir, "/Code/PCA.R"))
 #eingabe: frame mit numerischen und nicht nummerischen Variablen
 #returns: frame mit nummerischen und nicht nummerischen Variablen, nummerische sind mit PCA behandelt
-trainingset_withoutOutlier_afterPCA<-executePCA(trainingset_withoutOutlier)
+#trainingset_withoutOutlier_afterPCA<-executePCA(trainingset_withoutOutlier)
 
 #######################START TRAINING#########################################################
 source(paste0(dir, "/Code/ModelTrainer.R"))
@@ -124,29 +131,18 @@ errorRates.svm <- c()
 errorRates.J48 <- c()
 errorRates.ensemble <- c()
 errorRates.ensemble_wo <- c()
-#train multiple times 
-
-###Temp
-#idx.train <- createDataPartition(y = trainingset$churn, p=0.7, list=FALSE)
-#data.tr <- trainingset[idx.train,]
-#data.ts <- trainingset[-idx.train,]
-
-#rf <- trainRandomForest(data.tr)
-
-idx.train <- createDataPartition(y = trainingset$churn, p=0.7, list=FALSE)
-data.tr <- trainingset[idx.train,]
-data.ts <- trainingset[-idx.train,]
 
 #save(rf, file = "rfModel.RData")
 
+k <- 10
+res <- c()
+res_wo <- c()
 
-#glm_ensemble <- caretStack(model_list_big, method='glm', trControl=trainControl(method='cv'))
-
-for (i in c(1:5)) {
+for (i in c(1:k)) {
   print(paste("start Iteration ", i))
 
   #Split to test/trainigsset
-  idx.train <- createDataPartition(y = trainingset$churn, p=0.7, list=FALSE)
+  idx.train <- createDataPartition(y = trainingset$churn, p=(1-1/k), list=FALSE)
   data.tr <- trainingset[idx.train,]
   data.ts <- trainingset[-idx.train,]
   
@@ -198,7 +194,9 @@ for (i in c(1:5)) {
   #err.knn <- ModelPerformanceByClass(data.ts$churn, yhat.knn)
   #err.svm <- ModelPerformance(data.ts$churn, yhat.svm)
   #err.J48 <- ModelPerformanceByClass(data.ts$churn, yhat.J48)
-  err.ensemble_wo <- ModelPerformance(data.ts$churn, yhat_ens_wo)
+  #err.ensemble_wo <- ModelPerformance(data.ts$churn, yhat_ens_wo)
+  lm.ensemble <- getLiftMeasure(data.ts$churn, yhat_ens)
+  lm.ensemble_wo <- getLiftMeasure(data.ts$churn, yhat_ens_wo)
   
   #print(paste0("ErrorRate (nnet): ", err.nnet))
   #print(paste0("ErrorRate (naiveBayes): ", err.naiveBayes))
@@ -207,8 +205,8 @@ for (i in c(1:5)) {
   #print(paste0("ErrorRate (KNN): ", err.knn))
   #print(paste0("ErrorRate (svm): ", err.svm))
   #print(paste0("ErrorRate (J48): ", err.J48))
-  print(paste0("ErrorRate (Ensemble): ", err.ensemble))
-  print(paste0("ErrorRate (Ensemble WO): ", err.ensemble_wo))
+  print(paste0("LiftMeasure (Ensemble): ", lm.ensemble))
+  print(paste0("LiftMeasure (Ensemble WO): ", lm.ensemble_wo))
   
   #errorRates.nnet <- c(errorRates.nnet, err.nnet)
   #errorRates.naiveBayes <- c(errorRates.naiveBayes, err.naiveBayes)
@@ -217,14 +215,14 @@ for (i in c(1:5)) {
   #errorRates.knn <- c(errorRates.knn, err.knn)
   #errorRates.svm <- c(errorRates.svm, err.svm)
   #errorRates.J48 <- c(errorRates.J48, err.J48)
-  errorRates.ensemble <- c(errorRates.ensemble, err.ensemble)
-  errorRates.ensemble_wo <- c(errorRates.ensemble_wo, err.ensemble_wo)
+  res <- c(res, lm.ensemble)
+  res_wo <- c(res_wo, lm.ensemble_wo)
   
   ##Send me an information:
   
   sendmail("frederik@pahde.com", subject="R Notification", message=paste("Finished Ensembling\n
-                                                                         Error Rate: ", err.ensemble, 
-                                                                         "\nError Rate (wo): ", err.ensemble_wo))
+                                                                         Lift Measure: ", lm.ensemble, 
+                                                                         "\nLift Measure (wo): ", lm.ensemble_wo))
   
   #sendmail("frederik@pahde.com", subject="R Notification", message=paste("Finished Iteration ", i, ": 
   #                                                                      Logistic Regression: ", err.lr, "\n
@@ -249,9 +247,12 @@ for (i in c(1:5)) {
 #print("Error Rates J48: ")
 #print(errorRates.J48)
 print("Error Rates Ensemble: ")
-print(errorRates.ensemble)
+print(res)
+print(sum(res)/k)
 print("Error Rates Ensemble WO: ")
-print(errorRates.ensemble_wo)
+print(res_wo)
+print(sum(res_wo)/k)
+unused<-function(){
 ##############################END TRAINING#################################################################
 ##10 Fold CV for Logistic Regression
 #n <- 10
@@ -312,5 +313,5 @@ print(errorRates.ensemble_wo)
 #indicies <- which(difference.Median.Median>apply(completeCases,2,median)/2)
 #summary(completeCases[,indicies])
 
-#summary(trainingset[,50:78])
+#summary(trainingset[,50:78]
 }
