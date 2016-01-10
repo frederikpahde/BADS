@@ -10,17 +10,21 @@ return(complete_new_data)
 }
 #################################################################################
 pca<-function(trainingset_st_numeric){
+  trainingset_st_numeric<-getNumericVariables(trainingset_withoutOutlier)
 original_dimNumber<-length(trainingset_st_numeric)
 pca<-princomp(x=trainingset_st_numeric, scores=TRUE, cor = TRUE)
-summary(pca)
+#summary(pca)
 #how many components we want to retan?
 #-> where squared standard deviation (eigenvalue) is above 1 - they explain at least as much variation as the original variables
 #Proportion of Variance gives how much variance is contained in the variables, so the smaller it is the less important is the variable
 
 #pca$loadings # loadings are the the values in the eigenvektors
-#loadings(pca)
-plot(pca)
+#summary(pca)
+#plot(pca)
 components<-pca$sdev[pca$sdev^2>1]
+loadings<-pca$loadings[,1:length(components)]
+write.csv(loadings, file = "Komponentenmatrix.csv")
+print("wrote Komponentenmatrix to Komponentenmatrix.csv")
 reduced_data<-pca$scores[,1:length(components)]
 print(paste0("Reduced dimentions from original nummeric ",original_dimNumber, " to ", length(components)))
 
@@ -30,10 +34,12 @@ return(reduced_data)
 
 ###
 pca_perHand_auskommentieren<-function(){
+  trainingset_st<-trainingset_withoutOutlier
+  
   #standardized<-trainingset
-  plot(trainingset_st[4:5])
+  plot(trainingset_st[5:6])
   #plot(standardized[4:5])
-  my.cov<-cov(trainingset_st[4:5])
+  my.cov<-cov(trainingset_st[5:6])
   my.eigen<-eigen(my.cov)
   #sum of eigenvalues is the total variance in the dataset
   sum(my.eigen$values)
@@ -52,8 +58,8 @@ pca_perHand_auskommentieren<-function(){
   abline(0,pc2.slope,col="green")
   # Eigenvalues devided by the sum of eigenvalues (which is the total variance in the dataset) * 100 = % of the variance variable (its principle component) accounts for
   #-> goal is to find components that account for the most variance in the dataset
-  pc1.var = 100*round(my.eigen$values[1]/sum(my.eigen$values), digits=2)
   pc2.var = 100*round(my.eigen$values[2]/sum(my.eigen$values), digits=2)
+  pc1.var = 100*round(my.eigen$values[1]/sum(my.eigen$values), digits=2)
   
   summary(trainingset_st)
 }
