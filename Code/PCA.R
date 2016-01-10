@@ -10,7 +10,6 @@ return(complete_new_data)
 }
 #################################################################################
 pca<-function(trainingset_st_numeric){
-  trainingset_st_numeric<-getNumericVariables(trainingset_withoutOutlier)
 original_dimNumber<-length(trainingset_st_numeric)
 pca<-princomp(x=trainingset_st_numeric, scores=TRUE, cor = TRUE)
 #summary(pca)
