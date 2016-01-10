@@ -37,17 +37,17 @@ trainingset_withoutOutlier <- trainingset_withoutOutlier[,names(trainingset_with
 
 
 # in trainRandomForest function (ModelTrainer.R) added train(...importance = TRUE)
-trainRandomForest <- function(data.tr){
-  rfGrid <- expand.grid(mtry=seq(5,70,5))
-  rf.tune <- train(churn~., data = data.tr, method="parRF", trControl = ctrl, tuneGrid=rfGrid, importance=TRUE)
-  return(rf.tune)
-}
+#trainRandomForest <- function(data.tr){
+#  rfGrid <- expand.grid(mtry=seq(5,70,5))
+#  rf.tune <- train(churn~., data = data.tr, method="parRF", trControl = ctrl, tuneGrid=rfGrid, importance=TRUE)
+#  return(rf.tune)
+#}
 
-idx.train <- createDataPartition(y = trainingset$churn, p=0.7, list=FALSE)
-data.tr <- trainingset[idx.train,]
-data.ts <- trainingset[-idx.train,]
+#idx.train <- createDataPartition(y = trainingset$churn, p=0.7, list=FALSE)
+#data.tr <- trainingset[idx.train,]
+#data.ts <- trainingset[-idx.train,]
 
-rf <- trainRandomForest(data.tr)
+#rf <- trainRandomForest(data.tr)
 
 importance <- varImp(rf, type= 1, scale=FALSE)
 importance_ranking <- importance$importance
