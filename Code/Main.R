@@ -1,8 +1,8 @@
 dir <- Sys.getenv('BADS_Path')   
 
 ### Not on windows #######
-#library(doMC)           #
-#registerDoMC(cores = 4) #
+library(doMC)           #
+registerDoMC(cores = 4) #
 ##########################
 
 source(paste0(dir, "/Code/Utils.R"))
@@ -100,6 +100,7 @@ featureSelection <- function(){
 
 #Split to test/trainigsset
 
+#
 #trainingset <- trainingset[,selectedFeatures]
 #trainingset_withoutOutlier <- trainingset_withoutOutlier[,selectedFeatures]
 #columns <-colnames(trainingset_withoutCorrelated)
@@ -118,7 +119,8 @@ print("Finished Feature Selection")
 source(paste0(dir, "/Code/PCA.R"))
 #eingabe: frame mit numerischen und nicht nummerischen Variablen
 #returns: frame mit nummerischen und nicht nummerischen Variablen, nummerische sind mit PCA behandelt
-#trainingset_withoutOutlier_afterPCA<-executePCA(trainingset_withoutOutlier)
+trainingset_withoutOutlier<-executePCA(trainingset_withoutOutlier)
+trainingset<-executePCA(trainingset)
 
 #######################START TRAINING#########################################################
 source(paste0(dir, "/Code/ModelTrainer.R"))
@@ -154,7 +156,7 @@ for (i in c(1:k)) {
   #print("Finished NNET Training")
   #naiveBayes <- trainNaiveBayes(data.tr)
   #print("Finished Naive Bayes Training")
-  #lr <- trainLogisticRegression(data.tr_wo)
+  #lr <- trainLogisticRegression(data.tr)
   #print("Finished Logistic Regression")
   #rf <- trainRandomForest(data.tr)
   #print("Finished Random Forest")

@@ -21,6 +21,6 @@ loadImputedTrainingset <- function(dir){
 }
 
 getSelectedFeatureSet <- function(dir){
-  data <- read.csv(paste0(dir, "/Data/feature_selection_variablenames2.csv"),header=TRUE, sep = ";")
+  data <- read.csv(paste0(dir, "/Data/feature_selection_variablenames3.csv"),header=TRUE, sep = ";")
   return(data)
 }
