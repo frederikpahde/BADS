@@ -7,11 +7,11 @@ z.scale <- function(v){
   
   m<- mean(v)
   s<- sd(v)
-  
-  for(i in 1:length(v)){
-    v[i]<-((v[i]-m)/s)
+  if(s != 0){
+    for(i in 1:length(v)){
+      v[i]<-((v[i]-m)/s)
+    }
   }
- 
   return(v)
 }
 

@@ -31,7 +31,7 @@ ModelPerformanceByClass <- function(y, yhat){
   return(errorRate)
 }
 
-ctrl <- trainControl(method="cv", number = 20, classProbs = TRUE)
+ctrl <- trainControl(method="cv", number = 10, classProbs = TRUE)
 
 trainNnet <- function(data.tr){
   nnGrid <- expand.grid(size=c(2,5,9), decay=c(.1,1,10))
@@ -40,7 +40,7 @@ trainNnet <- function(data.tr){
 }
 
 trainRandomForest <- function(data.tr){
-  rfGrid <- expand.grid(mtry=seq(5,70,5))
+  rfGrid <- expand.grid(mtry=c(11))
   rf.tune <- train(churn~., data = data.tr, method="parRF", trControl = ctrl, tuneGrid=rfGrid, importance=TRUE)
   return(rf.tune)
 }
@@ -59,7 +59,7 @@ trainKNN <- function(data.tr){
 
 trainSVM <- function(data.tr){
   svmGrid <- expand.grid(gamma=c(2), cost=c(0.01, 0.02, 0.025, 0.03, 0.04, 0.05, 0.1,0.2,0.3))
-  svm.tune <- train(churn~., data = data.tr, method="svmLinear2", trControl = ctrl, tuneGrid=svmGrid)
+  svm.tune <- train(churn~., data = data.tr, method="svmGrad", trControl = ctrl, tuneGrid=svmGrid)
   return(svm.tune)
 }
 
@@ -88,8 +88,8 @@ trainEnsembledMethod <- function(data.tr){
     trControl=ctrl,
     metric='ROC',
     tuneList=list(
-      rf=caretModelSpec(method='rf', tuneGrid=data.frame(.mtry=c(9,27, 41, 75))),
-      svm=caretModelSpec(method='svmLinear2', tuneGrid=data.frame(.gamma=1, .cost=c(0.01,0.05,0.1))),
+      rf=caretModelSpec(method='rf', tuneGrid=data.frame(.mtry=c(15,27, 41))),
+      svm=caretModelSpec(method='svmRadial', tuneGrid=data.frame(.sigma=c(3,5), .C=c(10, 20))),
       glm=caretModelSpec(method='glm')
     )
   )
