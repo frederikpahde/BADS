@@ -4,8 +4,8 @@ dir <- Sys.getenv('BADS_Path')
 #dir<-getwd()
 
 ### Not on windows #######
-library(doMC)           #
-registerDoMC(cores = 4) #
+#library(doMC)           #
+#registerDoMC(cores = 4) #
 ##########################
 
 source(paste0(dir, "/Code/Utils.R"))
