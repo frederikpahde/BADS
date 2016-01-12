@@ -4,8 +4,8 @@ dir <- Sys.getenv('BADS_Path')
 #dir<-getwd()
 
 ### Not on windows #######
-#library(doMC)           #
-#registerDoMC(cores = 4) #
+library(doMC)           #
+registerDoMC(cores = 4) #
 ##########################
 
 source(paste0(dir, "/Code/Utils.R"))
@@ -36,7 +36,7 @@ trainingset <- loadImputedTrainingset(paste0(dir, "/Data/ImputedData.csv"))
 numericVariables = getNumericVariables(trainingset)
 categoricVariables <- trainingset[setdiff(colnames(trainingset), colnames(numericVariables))]
 print("Finished Missing Value Handling")
-trainingset <- trainingset[1:500,]
+trainingset <- trainingset[sample(1:50000,5000, replace = FALSE),]
 
 #Outlier Handling
 source(paste0(dir, "/Code/Outliers.R"))
@@ -87,6 +87,7 @@ source(paste0(dir, "/Code/ModelTrainer.R"))
 selectedFeatures <- getSelectedFeatureSet(dir)
 selectedFeatures <- c(as.vector(selectedFeatures[,1]), "churn")
 trainingset <- trainingset[,selectedFeatures]
+trainingset_withoutOutlier <- trainingset_withoutOutlier[,selectedFeatures]
 
 
 featureSelection <- function(){
@@ -139,7 +140,7 @@ errorRates.ensemble_wo <- c()
 
 #save(rf, file = "rfModel.RData")
 
-k <- 10
+k <- 5
 res <- c()
 res_wo <- c()
 
@@ -171,6 +172,7 @@ for (i in c(1:k)) {
   #print("Finished J48 Training")
   #adaBag <- trainAdaBag(data.tr)
   #print("Finished AdaBag Training")
+  
   greedy_ensemble <- trainEnsembledMethod(data.tr)
   print("Finished Ensembled Training")
   greedy_ensemble_wo <- trainEnsembledMethod(data.tr_wo)
@@ -181,9 +183,9 @@ for (i in c(1:k)) {
   #yhat.nb <- predict(nb, newdata = data.ts, type="class")
   #errorRate <- 1- sum(as.numeric(yhat.nb == data.ts$churn))/length(data.ts$churn)
   #Predict Test Set
-  #yhat.nnet <- predict(nnet, newdata = data.ts_wo, type="raw")
+  #yhat.nnet <- predict(nnet, newdata = data.ts_wo, type="prob")[,2]
   #yhat.naiveBayes <- predict(naiveBayes, newdata = data.ts, type="raw")
-  #yhat.lr <- predict(lr, newdata = data.ts_wo, type="prob")[,2]
+  #yhat.lr <- predict(lr, newdata = data.ts, type="prob")[,2]
   #yhat.rf <- predict(rf, newdata = data.ts, type = "prob")[,2]
   #yhat.knn <- predict(knn, newdata = data.ts, type = "raw")
   #yhat.svm <- predict(svm, newdata = data.ts_wo, type = "prob")[,2]
@@ -202,6 +204,7 @@ for (i in c(1:k)) {
   #err.ensemble_wo <- ModelPerformance(data.ts$churn, yhat_ens_wo)
   lm.ensemble <- getLiftMeasure(data.ts$churn, yhat_ens)
   lm.ensemble_wo <- getLiftMeasure(data.ts$churn, yhat_ens_wo)
+  #err.rf <- getLiftMeasure(data.ts$churn, yhat.rf)
   
   #print(paste0("ErrorRate (nnet): ", err.nnet))
   #print(paste0("ErrorRate (naiveBayes): ", err.naiveBayes))
@@ -257,6 +260,7 @@ print(sum(res)/k)
 print("Error Rates Ensemble WO: ")
 print(res_wo)
 print(sum(res_wo)/k)
+
 unused<-function(){
 ##############################END TRAINING#################################################################
 ##10 Fold CV for Logistic Regression
