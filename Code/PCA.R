@@ -30,7 +30,7 @@ print(paste0("Reduced dimentions from original nummeric ",original_dimNumber, " 
 return(reduced_data)
 }
 
-rebuild_components_for_training_Data<-function(data){
+rebuild_components_for_test_set<-function(data){
   #data<-getNumericVariables(trainingset_withoutOutlier[,5:7])
   loadings<-read.csv(file ="Komponentenmatrix.csv")
   data_numeric<-getNumericVariables(data)
