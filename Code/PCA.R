@@ -23,18 +23,30 @@ pca<-princomp(x=trainingset_st_numeric, scores=TRUE, cor = TRUE)
 components<-pca$sdev[pca$sdev^2>1]
 loadings<-pca$loadings[,1:length(components)]
 write.csv(loadings, file = "Komponentenmatrix.csv")
+loadings1<-read.csv(file ="Komponentenmatrix.csv")
 print("wrote Komponentenmatrix to Komponentenmatrix.csv")
 reduced_data<-pca$scores[,1:length(components)]
 print(paste0("Reduced dimentions from original nummeric ",original_dimNumber, " to ", length(components)))
-
 return(reduced_data)
-
 }
 
-###
+rebuild_components_for_training_Data<-function(data){
+  #data<-getNumericVariables(trainingset_withoutOutlier[,5:7])
+  loadings<-read.csv(file ="Komponentenmatrix.csv")
+  data_numeric<-getNumericVariables(data)
+  data_numeric<-data_numeric[,-which(colnames(data_numeric)=="Customer_ID")]
+  data_rest<-data[,setdiff(colnames(data),colnames(data_numeric))]
+  components<-sapply(2:length(loadings),function(i)  sapply(1:length(data[,2]), function(x) sum(sapply(1:length(loadings[,i]), function(y) loadings[y,i] * data[x,loadings[y,1]] )))) 
+  complete_new_data<-data.frame(new_data_numcomponentseric,data_rest)
+  return(complete_new_data)
+}
+
+
+##################################################################
+#Some additional calculations that are not relevant
+##################################################################
 pca_perHand_auskommentieren<-function(){
   trainingset_st<-trainingset_withoutOutlier
-  
   #standardized<-trainingset
   plot(trainingset_st[5:6])
   #plot(standardized[4:5])

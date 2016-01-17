@@ -40,7 +40,7 @@ trainNnet <- function(data.tr){
 }
 
 trainRandomForest <- function(data.tr){
-  rfGrid <- expand.grid(mtry=c(11))
+  rfGrid <- expand.grid(mtry=c(55))
   rf.tune <- train(churn~., data = data.tr, method="parRF", trControl = ctrl, tuneGrid=rfGrid, importance=TRUE)
   return(rf.tune)
 }
@@ -58,8 +58,8 @@ trainKNN <- function(data.tr){
 }
 
 trainSVM <- function(data.tr){
-  svmGrid <- expand.grid(gamma=c(2), cost=c(0.01, 0.02, 0.025, 0.03, 0.04, 0.05, 0.1,0.2,0.3))
-  svm.tune <- train(churn~., data = data.tr, method="svmGrad", trControl = ctrl, tuneGrid=svmGrid)
+  svmGrid <- expand.grid(sigma=c(3,5), C=c(.1, .5, 1, 5, 10, 25))
+  svm.tune <- train(churn~., data = data.tr, method="svmRadial", trControl = ctrl)#, tuneGrid=svmGrid)
   return(svm.tune)
 }
 
@@ -88,12 +88,38 @@ trainEnsembledMethod <- function(data.tr){
     trControl=ctrl,
     metric='ROC',
     tuneList=list(
-      rf=caretModelSpec(method='rf', tuneGrid=data.frame(.mtry=c(15,27, 41))),
-      svm=caretModelSpec(method='svmRadial', tuneGrid=data.frame(.sigma=c(3,5), .C=c(10, 20))),
+      rf=caretModelSpec(method='rf', tuneGrid=data.frame(.mtry=c(37,55))),
+      svm=caretModelSpec(method='svmRadial'),
+      glm=caretModelSpec(method='glm')
+    )
+  )
+  glm_ensemble <- caretStack(
+    model_list_big, 
+    method='glm',
+    metric='ROC',
+    trControl=trainControl(
+      method='boot',
+      number=10,
+      savePredictions=TRUE,
+      classProbs=TRUE,
+      summaryFunction=twoClassSummary
+    )
+  )
+  return(glm_ensemble)
+}
+
+trainEnsembledMethod2 <- function(data.tr){
+  model_list_big <- caretList(
+    churn~., data=data.tr,
+    trControl=ctrl,
+    metric='ROC',
+    tuneList=list(
+      rf=caretModelSpec(method='rf', tuneGrid=data.frame(.mtry=c(37,55))),
+      svm=caretModelSpec(method='svmRadial'),
       glm=caretModelSpec(method='glm')
     )
   )
   
-  greedy_ensemble <- caretEnsemble(model_list_big, iter=1000L)
+  greedy_ensemble <- caretEnsemble(model_list_big)
   return(greedy_ensemble)
 }
