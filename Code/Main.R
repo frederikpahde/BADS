@@ -1,6 +1,6 @@
 dir <- Sys.getenv('BADS_Path')   
 
-#setwd("~/Documents/HU Berlin/WI 1516/BADS/Aufgabe/BADS")
+#setwd("~/Documents/HU_Berlin/WI_1516/BADS/Aufgabe/BADS")
 #dir<-getwd()
 
 ### Not on windows #######

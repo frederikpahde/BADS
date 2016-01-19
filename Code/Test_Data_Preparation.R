@@ -1,6 +1,6 @@
 dir <- Sys.getenv('BADS_Path')   
 
-#setwd("~/Documents/HU Berlin/WI 1516/BADS/Aufgabe/BADS")
+#setwd("~/Documents/HU_Berlin/WI_1516/BADS/Aufgabe/BADS")
 #dir<-getwd()
 
 source(paste0(dir, "/Code/Utils.R"))
@@ -43,7 +43,7 @@ print("Finished Scaling")
 
 source(paste0(dir, "/Code/ModelTrainer.R"))
 selectedFeatures <- getSelectedFeatureSet(dir)
-selectedFeatures <- c(as.vector(selectedFeatures[,1]), "churn")
+selectedFeatures <- c(as.vector(selectedFeatures[,1]))
 test_set <- test_set[,selectedFeatures]
 
 

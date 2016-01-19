@@ -37,7 +37,7 @@ rebuild_components_for_test_set<-function(data){
   data_numeric<-data_numeric[,-which(colnames(data_numeric)=="Customer_ID")]
   data_rest<-data[,setdiff(colnames(data),colnames(data_numeric))]
   components<-sapply(2:length(loadings),function(i)  sapply(1:length(data[,2]), function(x) sum(sapply(1:length(loadings[,i]), function(y) loadings[y,i] * data[x,loadings[y,1]] )))) 
-  complete_new_data<-data.frame(new_data_numcomponentseric,data_rest)
+  complete_new_data<-data.frame(components,data_rest)
   return(complete_new_data)
 }
 
