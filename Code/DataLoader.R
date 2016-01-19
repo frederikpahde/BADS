@@ -19,6 +19,10 @@ loadImputedTrainingset <- function(dir){
   data$churn = factor(data$churn, labels = c("good", "bad"))
   return(data)
 }
+loadImputedTestSet <- function(dir){
+  data <- read.csv(dir, sep = ",")
+  return(data)
+}
 
 getSelectedFeatureSet <- function(dir){
   data <- read.csv(paste0(dir, "/Data/feature_selection_variablenames3.csv"),header=TRUE, sep = ";")
