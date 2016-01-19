@@ -11,7 +11,7 @@ return(complete_new_data)
 #################################################################################
 pca<-function(trainingset_st_numeric){
 original_dimNumber<-length(trainingset_st_numeric)
-pca<-princomp(x=trainingset_st_numeric, scores=TRUE, cor = TRUE)
+pca<-princomp(x=trainingset_st_numeric, scores=TRUE)
 #summary(pca)
 #how many components we want to retan?
 #-> where squared standard deviation (eigenvalue) is above 1 - they explain at least as much variation as the original variables
