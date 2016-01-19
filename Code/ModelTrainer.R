@@ -80,6 +80,11 @@ trainLogisticRegression <- function(data.tr){
   return(bayes.tune)
 }
 
+trainGradientBoosting <- function(data.tr){
+  gbm <- train(churn~., data = data.tr, method="gbm", trControl = ctrl)
+  return(gbm)
+}
+
 #Ensemble Random Forest, Logistic Regression and SVMs
 library(caretEnsemble)
 trainEnsembledMethod <- function(data.tr){
@@ -123,3 +128,28 @@ trainEnsembledMethod2 <- function(data.tr){
   greedy_ensemble <- caretEnsemble(model_list_big)
   return(greedy_ensemble)
 }
+
+ensembleWrapper <- function(data.tr, data.tr_wo){
+  lr <- trainLogisticRegression(data.tr_wo)
+  gbm <- trainGradientBoosting(data.tr)
+  svm <- trainSVM(data.tr_wo)
+  rf <- trainRandomForest(data.tr)
+  
+  return(list(lr, gbm, svm, rf))
+}
+
+predictionWrapper <- function(modelList, newData, newData_wo){
+  res <- c(0)
+  n <- length(models)
+  #lr
+  res <- res + predict(modelList[[1]], newdata = newData_wo, type = "prob")$bad
+  #gbm
+  res <- res + predict(modelList[[2]], newdata = newData, type = "prob")$bad
+  #svm
+  res <- res + predict(modelList[[3]], newdata = newData_wo, type = "prob")$bad
+  #rf
+  res <- res + predict(modelList[[4]], newdata = newData, type = "prob")$bad
+  
+  return(res/n)
+}
+  

@@ -1,4 +1,4 @@
-requiredPackages = c("data.table","mvoutlier", "mail","mlbench", "caretEnsemble", "HighDimOut", "klaR", "adabag", "RWeka", "cvTools","CORElearn", "ggplot2", "lattice", "corrplot", "DMwR", "caret",  "Hmisc", "randomForest", "gmodels", "outliers", "glmnet", "e1071")
+requiredPackages = c("data.table","mvoutlier", "mail","doParallel", "mlbench", "caretEnsemble", "HighDimOut", "klaR", "adabag", "RWeka", "cvTools","CORElearn", "ggplot2", "lattice", "corrplot", "DMwR", "caret",  "Hmisc", "randomForest", "gmodels", "outliers", "glmnet", "e1071")
 requirePackage <- function(x)
 {
   if (!require(x,character.only = TRUE, warn.conflicts = FALSE))

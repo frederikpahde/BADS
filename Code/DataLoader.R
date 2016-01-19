@@ -1,5 +1,5 @@
 getTrainigset <- function(dir){
-  data <- read.csv(paste0(dir, "/Data/trainingset.csv"), sep = ',')
+  data <- read.csv(paste0(dir, "/Data/trainingset.csv"), sep = ',', na.strings=c("","NA"))
   data$churn = factor(data$churn, labels = c("good", "bad"))
   return(data)
 }

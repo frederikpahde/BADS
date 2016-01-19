@@ -1,0 +1,26 @@
+
+[1] "Lift Measure LR: "
+> print(lms.lr)
+ [1] 1.311489 1.361931 1.321577 1.321577 1.442638 1.351842 1.351842 1.250958 1.372019 1.361931
+> print("Lift Measure RF: ")
+[1] "Lift Measure RF: "
+> print(lms.rf)
+ [1] 1.392196 1.472903 1.513256 1.503168 1.422461 1.422461 1.472903 1.553610 1.462814 1.543521
+> #print("Error Rates KNN: ")
+> #print(errorRates.knn)
+> print("Lift Measure SVM: ")
+[1] "Lift Measure SVM: "
+> print(lms.svm)
+ [1] 0 0 0 0 0 0 0 0 0 0
+> print("Lift Measure GBM: ")
+[1] "Lift Measure GBM: "
+> print(lms.gbm)
+ [1] 1.392196 1.493079 1.351842 1.493079 1.482991 1.493079 1.493079 1.493079 1.462814 1.513256
+> print("Lift Measure Ensemble (Caret): ")
+[1] "Lift Measure Ensemble (Caret): "
+> print(lms.ensembleG)
+ [1] 1.462814 1.482991 1.422461 1.533433 1.442638 1.432549 1.543521 1.452726 1.513256 1.513256 0.000000
+> print("Lift Measure Ensemble (Own): ")
+[1] "Lift Measure Ensemble (Own): "
+> print(lms.ensemble)
+ [1] 1.462814 1.482991 1.422461 1.533433 1.442638 1.432549 1.543521 1.452726 1.513256 1.513256
