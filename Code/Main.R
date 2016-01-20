@@ -120,6 +120,8 @@ featureSelection <- function(){
 ###########
 print("Finished Feature Selection")
 
+##temp!!!
+trainingset <- trainingset_withoutOutlier
 
 #PCA
 source(paste0(dir, "/Code/PCA.R"))
