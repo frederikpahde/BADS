@@ -11,7 +11,7 @@ return(complete_new_data)
 #################################################################################
 pca<-function(trainingset_st_numeric){
 original_dimNumber<-length(trainingset_st_numeric)
-pca<-princomp(x=trainingset_st_numeric, scores=TRUE, cor = TRUE)
+pca<-princomp(x=trainingset_st_numeric, scores=TRUE)
 #summary(pca)
 #how many components we want to retan?
 #-> where squared standard deviation (eigenvalue) is above 1 - they explain at least as much variation as the original variables
@@ -37,7 +37,7 @@ rebuild_components_for_test_set<-function(data){
   data_numeric<-data_numeric[,-which(colnames(data_numeric)=="Customer_ID")]
   data_rest<-data[,setdiff(colnames(data),colnames(data_numeric))]
   components<-sapply(2:length(loadings),function(i)  sapply(1:length(data[,2]), function(x) sum(sapply(1:length(loadings[,i]), function(y) loadings[y,i] * data[x,loadings[y,1]] )))) 
-  complete_new_data<-data.frame(new_data_numcomponentseric,data_rest)
+  complete_new_data<-data.frame(components,data_rest)
   return(complete_new_data)
 }
 
