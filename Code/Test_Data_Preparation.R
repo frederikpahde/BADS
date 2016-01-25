@@ -23,7 +23,7 @@ source(paste0(dir,"/Code/missingValueHandler.R"))
 #numericVariables = getNumericVariables(test_set)
 #categoricVariables <- test_set[setdiff(colnames(test_set), colnames(test_set))]
 #write.csv(test_set, paste0(dir, "/Data/ImputedData_testSet.csv"), sep = ",")
-test_set <- loadImputedTestSet(paste0(dir, "/Data/ImputedData.csv"))
+test_set <- loadImputedTestSet(paste0(dir, "/Data/ImputedData_testSet.csv"))
 #numericVariables = getNumericVariables(test_set)
 #categoricVariables <- test_set[setdiff(colnames(test_set), colnames(numericVariables))]
 print("Finished Missing Value Handling")

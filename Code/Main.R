@@ -164,7 +164,7 @@ for (i in c(1:k)) {
   #lr <- trainLogisticRegression(data.tr_wo)
   #print("Finished Logistic Regression")
   rf <- trainRandomForest(data.tr)
-  save(rf, file = "randomForestModelWOPCA.RData")
+  save(rf, file = paste0(dir, "/Models/randomForestModelWOPCA.RData"))
   print("Finished Random Forest")
   #knn <- trainKNN(data.tr)
   #print("Finished KNN Training")
@@ -175,7 +175,7 @@ for (i in c(1:k)) {
   #adaBag <- trainAdaBag(data.tr)
   #print("Finished AdaBag Training")
   gbm <- trainGradientBoosting(data.tr_wo)
-  save(gbm, file = "gradientBoostingModelWOPCA.RData")
+  save(gbm, file = paste0(dir, "/Models/gradientBoostingModelWOPCA.RData"))
   print("Finished Gradient Boosting Training")
   
   #greedy_ensemble <- trainEnsembledMethod2(data.tr)
