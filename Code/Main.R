@@ -1,8 +1,5 @@
 dir <- Sys.getenv('BADS_Path')   
 
-setwd("~/Documents/HU_Berlin/WI_1516/BADS/Aufgabe/BADS")
-dir<-getwd()
-
 ### Not on windows #######
 #library(doMC)           #
 #registerDoMC(cores = 4) #
@@ -120,13 +117,12 @@ featureSelection <- function(){
 ###########
 print("Finished Feature Selection")
 
-
 #PCA
 source(paste0(dir, "/Code/PCA.R"))
 #eingabe: frame mit numerischen und nicht nummerischen Variablen
 #returns: frame mit nummerischen und nicht nummerischen Variablen, nummerische sind mit PCA behandelt
-trainingset_withoutOutlier<-executePCA(trainingset_withoutOutlier)
-trainingset<-executePCA(trainingset)
+#trainingset_withoutOutlier<-executePCA(trainingset_withoutOutlier)
+#trainingset<-executePCA(trainingset)
 
 #######################START TRAINING#########################################################
 source(paste0(dir, "/Code/ModelTrainer.R"))
@@ -152,7 +148,7 @@ for (i in c(1:k)) {
   print(paste("start Iteration ", i))
 
   #Split to test/trainigsset
-  #idx.train <- createDataPartition(y = trainingset$churn, p=(1-1/k), list=FALSE)
+  idx.train <- createDataPartition(y = trainingset$churn, p=(1-1/k), list=FALSE)
   data.tr <- trainingset#[idx.train,]
   #data.ts <- trainingset[-idx.train,]
   
@@ -168,7 +164,7 @@ for (i in c(1:k)) {
   #lr <- trainLogisticRegression(data.tr_wo)
   #print("Finished Logistic Regression")
   rf <- trainRandomForest(data.tr)
-  save(rf, file = "randomForestModel.RData")
+  save(rf, file = paste0(dir, "/Models/randomForestModelWOPCA.RData"))
   print("Finished Random Forest")
   #knn <- trainKNN(data.tr)
   #print("Finished KNN Training")
@@ -178,8 +174,8 @@ for (i in c(1:k)) {
   #print("Finished J48 Training")
   #adaBag <- trainAdaBag(data.tr)
   #print("Finished AdaBag Training")
-  gbm <- trainGradientBoosting(data.tr)
-  save(gbm, file = "gradientBoostingModel.RData")
+  gbm <- trainGradientBoosting(data.tr_wo)
+  save(gbm, file = paste0(dir, "/Models/gradientBoostingModelWOPCA.RData"))
   print("Finished Gradient Boosting Training")
   
   #greedy_ensemble <- trainEnsembledMethod2(data.tr)
@@ -200,7 +196,7 @@ for (i in c(1:k)) {
   #yhat.rf <- predict(rf, newdata = data.ts, type = "prob")[,2]
   #yhat.knn <- predict(knn, newdata = data.ts, type = "raw")
   #yhat.svm <- predict(svm, newdata = data.ts_wo, type = "prob")[,2]
-  #yhat.gbm <- predict(gbm, newdata = data.ts, type = "prob")[,2]
+  #yhat.gbm <- predict(gbm, newdata = data.ts_wo, type = "prob")[,2]
   #yhat.J48 <- predict(J48, newdata = data.ts, type = "raw")
   #yhat_ensG <- predict(greedy_ensemble, newdata = data.ts)
   #yhat_ens_wo <- predict(greedy_ensemble_wo, newdata = data.ts_wo)
@@ -252,10 +248,8 @@ for (i in c(1:k)) {
   #                                                                       "\nLift Measure (wo): ", lm.ensemble_wo))
   
   #sendmail("frederik@pahde.com", subject="R Notification", message=paste("Finished Iteration ", i, ": 
-  #                                                                      Logistic Regression: ", lm.lr, "\n
   #                                                                      Random Forest: ", lm.rf, "\n
   #                                                                      Gradient Boosting: ", lm.gbm, "\n
-  #                                                                      Ensemble (caret): ", lm.ensembleG, "\n
   #                                                                      Ensemble (Own): ", lm.ensemble), password="rmail")
 
   

@@ -5,7 +5,7 @@ getTrainigset <- function(dir){
 }
 
 getTestset <- function(dir){
-  data <- read.csv(paste0(dir, "/Data/testset.csv"))
+  data <- read.csv(paste0(dir, "/Data/testset.csv"), na.strings=c("","NA"))
   return(data)
 }
 

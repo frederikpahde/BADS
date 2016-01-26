@@ -27,7 +27,7 @@ test_set <- loadImputedTestSet(paste0(dir, "/Data/ImputedData_testSet.csv"))
 #numericVariables = getNumericVariables(test_set)
 #categoricVariables <- test_set[setdiff(colnames(test_set), colnames(numericVariables))]
 print("Finished Missing Value Handling")
-test_set <- test_set[sample(1:50000,5000, replace = FALSE),]
+#test_set <- test_set[sample(1:50000,5000, replace = FALSE),]
 
 #Outlier Handling
 source(paste0(dir, "/Code/Outliers.R"))
@@ -48,6 +48,5 @@ test_set <- test_set[,selectedFeatures]
 
 
 source(paste0(dir, "/Code/PCA.R"))
-test_set<-rebuild_components_for_test_set(test_set)
+#test_set<-rebuild_components_for_test_set(test_set)
 print("Data is ready")
-
